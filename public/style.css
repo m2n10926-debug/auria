@@ -236,7 +236,7 @@ textarea, input[type="text"], input[type="number"], select {
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
-  background: var(--card);
+  background: #f5f8fa;
   color: var(--text);
   resize: vertical;
 }
