@@ -73,6 +73,7 @@
   const recommendCardEl = document.getElementById("recommend-card");
   const recommendationEl = document.getElementById("recommendation");
   const copyBtnRecommend = document.getElementById("copy-btn-recommend");
+  const auroraIconEl = document.querySelector(".icon-aurora");
 
   function updateMemoCharCount() {
     memoCharCountEl.textContent = `${memoEl.value.length}文字`;
@@ -108,6 +109,7 @@
     resultCharCountEl.textContent = "";
     copyBtn.disabled = true;
     copyBtnTop.disabled = true;
+    if (auroraIconEl) auroraIconEl.classList.add("generating");
 
     try {
       const res = await fetch("/api/generate", {
@@ -167,6 +169,7 @@
       generateStatus.textContent = `エラー: ${err.message}`;
     } finally {
       generateBtn.disabled = false;
+      if (auroraIconEl) auroraIconEl.classList.remove("generating");
     }
   }
 
