@@ -384,7 +384,7 @@ button.secondary:hover { background: #f3f4f6; }
 /* --- 生成タブ：左右分割 --- */
 .generate-layout {
   display: grid;
-  grid-template-columns: minmax(340px, 440px) 1fr;
+  grid-template-columns: minmax(380px, 460px) 1fr;
   gap: 28px;
   align-items: stretch;
 }
