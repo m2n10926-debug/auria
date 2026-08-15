@@ -170,6 +170,7 @@ main {
 .section-icon.icon-aurora {
   width: 26px;
   height: 26px;
+  margin-top: -5px;
 }
 
 .step-badge {
@@ -409,11 +410,20 @@ button.secondary:hover { background: #f3f4f6; }
   min-width: 0;
 }
 
+.generate-output {
+  gap: 16px;
+}
+
+.generate-output .consistency-warnings,
+.generate-output .result-card,
+.generate-output .recommend-card {
+  margin-bottom: 0;
+}
+
 .result-card {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
 }
 
 .result-card-header {
