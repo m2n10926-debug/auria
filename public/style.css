@@ -46,7 +46,7 @@ body {
 
 .user-display-name {
   font-size: 0.9rem;
-  color: var(--muted);
+  color: #374151;
 }
 
 .brand {
@@ -56,8 +56,8 @@ body {
 }
 
 .brand-logo {
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
 }
 
 .brand-name {
@@ -342,6 +342,13 @@ button.secondary:hover { background: #f3f4f6; }
 
 .btn-icon svg { width: 14px; height: 14px; }
 .btn-icon:hover:not(:disabled) { background: #f3f4f6; color: var(--text); }
+
+#logout-btn {
+  color: #374151;
+  border-color: #9aa5b1;
+}
+
+#logout-btn:hover { color: var(--text); border-color: #6b7280; }
 .btn-icon:disabled { opacity: 0.4; cursor: default; }
 
 .status { font-size: 0.85rem; color: var(--muted); }
