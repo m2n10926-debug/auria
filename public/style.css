@@ -136,7 +136,7 @@ main {
 
 /* --- カード --- */
 .card {
-  background: var(--card);
+  background: linear-gradient(135deg, #f6fdfc 0%, #f6faff 55%, #faf7fe 100%);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px 24px;
@@ -432,6 +432,7 @@ button.secondary:hover { background: #f3f4f6; }
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: var(--card);
 }
 
 .result-card-header {
