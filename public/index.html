@@ -221,30 +221,33 @@
               <div class="result-card-header">
                 <div class="result-card-title">
                   <h2>生成結果</h2>
-                  <svg class="section-icon icon-aurora" viewBox="0 0 28 28" fill="none">
-                    <defs>
-                      <linearGradient id="auroraIconGrad1" x1="2" y1="25" x2="26" y2="3" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#0ea5a0"/>
-                        <stop offset="0.45" stop-color="#38bdf8"/>
-                        <stop offset="1" stop-color="#a78bfa"/>
-                      </linearGradient>
-                      <linearGradient id="auroraIconGrad2" x1="3" y1="22" x2="23" y2="5" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#5eead4"/>
-                        <stop offset="1" stop-color="#c4b5fd"/>
-                      </linearGradient>
-                      <linearGradient id="auroraIconGrad3" x1="5" y1="19" x2="21" y2="7" gradientUnits="userSpaceOnUse">
-                        <stop offset="0" stop-color="#99f6e4"/>
-                        <stop offset="1" stop-color="#e0e7ff"/>
-                      </linearGradient>
-                    </defs>
-                    <path d="M2 25c2.6-8.4 5.6-14 10-14 4.2 0 4.6 6.6 9 6.6 2.9 0 4.9-2.3 6.7-5.2-2.2 8.2-5.6 13.8-10.7 13.8-4.9 0-5.7-7.2-10-7.2-2.1 0-3.8 2.4-5 6z" fill="url(#auroraIconGrad1)" opacity="0.92"/>
-                    <path d="M4 21.5c2.2-6.2 4.8-10 7.9-10 3.2 0 3.7 5.2 7.3 5.2 2.6 0 4.2-1.9 5.8-4.3-1.8 5.9-4.6 10.2-8.7 10.2-3.9 0-4.6-5.6-8-5.6-1.8 0-3.1 2-4.3 4.5z" fill="url(#auroraIconGrad2)" opacity="0.65"/>
-                    <path d="M6.5 18c1.7-4.4 3.6-6.9 5.8-6.9 2.3 0 2.6 3.7 5.3 3.7 1.8 0 3-1.3 4.1-3-1.3 4.2-3.3 7.2-6.2 7.2-2.8 0-3.3-4-5.8-4-1.3 0-2.3 1.4-3.2 3z" fill="url(#auroraIconGrad3)" opacity="0.5"/>
-                    <circle cx="5" cy="5" r="1.1" fill="#fde68a"/>
-                    <circle cx="9" cy="8.2" r="0.6" fill="#fef3c7"/>
-                    <circle cx="3" cy="9.2" r="0.5" fill="#fef3c7"/>
-                    <path d="M5 3v4M3 5h4" stroke="#fde68a" stroke-width="0.7" stroke-linecap="round"/>
-                  </svg>
+                  <span class="aurora-icon-wrap" id="aurora-icon-wrap">
+                    <svg class="section-icon icon-aurora" viewBox="0 0 28 28" fill="none">
+                      <defs>
+                        <linearGradient id="auroraIconGrad1" x1="2" y1="25" x2="26" y2="3" gradientUnits="userSpaceOnUse">
+                          <stop offset="0" stop-color="#0ea5a0"/>
+                          <stop offset="0.45" stop-color="#38bdf8"/>
+                          <stop offset="1" stop-color="#a78bfa"/>
+                        </linearGradient>
+                        <linearGradient id="auroraIconGrad2" x1="3" y1="22" x2="23" y2="5" gradientUnits="userSpaceOnUse">
+                          <stop offset="0" stop-color="#5eead4"/>
+                          <stop offset="1" stop-color="#c4b5fd"/>
+                        </linearGradient>
+                        <linearGradient id="auroraIconGrad3" x1="5" y1="19" x2="21" y2="7" gradientUnits="userSpaceOnUse">
+                          <stop offset="0" stop-color="#99f6e4"/>
+                          <stop offset="1" stop-color="#e0e7ff"/>
+                        </linearGradient>
+                      </defs>
+                      <path d="M2 25c2.6-8.4 5.6-14 10-14 4.2 0 4.6 6.6 9 6.6 2.9 0 4.9-2.3 6.7-5.2-2.2 8.2-5.6 13.8-10.7 13.8-4.9 0-5.7-7.2-10-7.2-2.1 0-3.8 2.4-5 6z" fill="url(#auroraIconGrad1)" opacity="0.92"/>
+                      <path d="M4 21.5c2.2-6.2 4.8-10 7.9-10 3.2 0 3.7 5.2 7.3 5.2 2.6 0 4.2-1.9 5.8-4.3-1.8 5.9-4.6 10.2-8.7 10.2-3.9 0-4.6-5.6-8-5.6-1.8 0-3.1 2-4.3 4.5z" fill="url(#auroraIconGrad2)" opacity="0.65"/>
+                      <path d="M6.5 18c1.7-4.4 3.6-6.9 5.8-6.9 2.3 0 2.6 3.7 5.3 3.7 1.8 0 3-1.3 4.1-3-1.3 4.2-3.3 7.2-6.2 7.2-2.8 0-3.3-4-5.8-4-1.3 0-2.3 1.4-3.2 3z" fill="url(#auroraIconGrad3)" opacity="0.5"/>
+                      <circle cx="5" cy="5" r="1.1" fill="#fde68a"/>
+                      <circle cx="9" cy="8.2" r="0.6" fill="#fef3c7"/>
+                      <circle cx="3" cy="9.2" r="0.5" fill="#fef3c7"/>
+                      <path d="M5 3v4M3 5h4" stroke="#fde68a" stroke-width="0.7" stroke-linecap="round"/>
+                    </svg>
+                    <span class="aurora-icon-sweep"></span>
+                  </span>
                 </div>
                 <button id="copy-btn-top" class="btn-icon" disabled>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -255,12 +258,6 @@
               <div id="warnings" class="warnings hidden"></div>
 
               <div class="result-frame">
-                <div class="aurora-loading" id="aurora-loading">
-                  <div class="aurora-layer aurora-far"></div>
-                  <div class="aurora-layer aurora-mid"></div>
-                  <div class="aurora-layer aurora-near"></div>
-                  <span class="aurora-loading-label">生成しています…</span>
-                </div>
                 <label class="result-sublabel">倶楽部コメント（編集可）</label>
                 <textarea id="result" placeholder="ここに生成結果が表示されます"></textarea>
                 <div class="result-footer">
