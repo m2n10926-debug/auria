@@ -450,7 +450,15 @@ button.secondary:hover { background: #f3f4f6; }
   position: absolute;
   inset: 0;
   border-radius: 10px;
-  background: #ffffff;
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(circle, rgba(45, 212, 191, 0.65), transparent 65%),
+    radial-gradient(circle, rgba(56, 189, 248, 0.6), transparent 65%),
+    radial-gradient(circle, rgba(167, 139, 250, 0.6), transparent 65%),
+    radial-gradient(circle, rgba(45, 212, 191, 0.5), transparent 65%);
+  background-repeat: no-repeat;
+  background-size: 90% 90%, 100% 100%, 85% 85%, 95% 95%;
+  background-position: -15% 40%, 25% 75%, 65% 15%, 100% 60%;
   display: none;
   align-items: center;
   justify-content: center;
@@ -460,43 +468,19 @@ button.secondary:hover { background: #f3f4f6; }
 
 .aurora-loading.active {
   display: flex;
+  animation: auroraFlow 6s ease-in-out infinite;
 }
 
-.aurora-band {
-  position: absolute;
-  width: 70%;
-  height: 60px;
-  border-radius: 50%;
-  filter: blur(26px);
-  opacity: 0.5;
-  animation: auroraCurtainDrift 4.5s ease-in-out infinite;
-}
-
-.aurora-band:nth-child(1) {
-  top: 22%;
-  left: -20%;
-  background: #2dd4bf;
-  animation-delay: 0s;
-}
-
-.aurora-band:nth-child(2) {
-  top: 46%;
-  left: -30%;
-  background: #38bdf8;
-  animation-delay: 0.8s;
-}
-
-.aurora-band:nth-child(3) {
-  top: 68%;
-  left: -10%;
-  background: #a78bfa;
-  animation-delay: 1.6s;
-}
-
-@keyframes auroraCurtainDrift {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(160%); }
-  100% { transform: translateX(0); }
+@keyframes auroraFlow {
+  0% {
+    background-position: -15% 40%, 25% 75%, 65% 15%, 100% 60%;
+  }
+  50% {
+    background-position: 55% 60%, 90% 35%, 15% 70%, 30% 20%;
+  }
+  100% {
+    background-position: -15% 40%, 25% 75%, 65% 15%, 100% 60%;
+  }
 }
 
 .aurora-loading-label {
