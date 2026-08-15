@@ -136,7 +136,7 @@ main {
 
 /* --- カード --- */
 .card {
-  background: linear-gradient(135deg, #f0fbfa 0%, #f0f8fe 55%, #f7f2fd 100%);
+  background: linear-gradient(135deg, #f3fcfb 0%, #f3f9ff 55%, #f9f5fe 100%);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px 24px;
@@ -236,7 +236,7 @@ textarea, input[type="text"], input[type="number"], select {
   border-radius: 8px;
   font-size: 0.95rem;
   font-family: inherit;
-  background: #f5f8fa;
+  background: var(--card);
   color: var(--text);
   resize: vertical;
 }
