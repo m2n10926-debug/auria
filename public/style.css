@@ -178,6 +178,24 @@ main {
   margin: 4px 0 14px;
 }
 
+.required-badge {
+  display: inline-block;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+label .required-badge {
+  margin-left: 4px;
+}
+
 .char-count {
   color: var(--muted);
   font-size: 0.78rem;
