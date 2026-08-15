@@ -162,9 +162,14 @@ main {
 }
 
 .section-icon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
+}
+
+.section-icon.icon-aurora {
+  width: 26px;
+  height: 26px;
 }
 
 .step-badge {
