@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログイン | auria+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f6f9;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent-solid: #0d9488;
+    --gradient: linear-gradient(135deg, #14b8a6, #0ea5e9);
+    --error-bg: #fef2f2;
+    --error-border: #fca5a5;
+    --error-text: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    color: var(--text);
+  }
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.12);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .brand-logo { width: 40px; height: 40px; }
+  .brand-name {
+    font-family: "Quicksand", "Trebuchet MS", "Yu Gothic", sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #2b3358;
+  }
+  .brand-plus { color: #9b7bef; font-size: 0.55em; font-weight: 700; vertical-align: super; }
+
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  input:focus { outline: 2px solid #14b8a6; outline-offset: 1px; }
+
+  button {
+    width: 100%;
+    background: var(--gradient);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  button:disabled { opacity: 0.6; cursor: default; }
+
+  .error {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .error.visible { display: block; }
+</style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="logoCircle" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#e6f0fb"/>
+          </radialGradient>
+          <linearGradient id="waveGrad" x1="0%" y1="80%" x2="100%" y2="10%">
+            <stop offset="0%" stop-color="#22c3b5"/>
+            <stop offset="50%" stop-color="#4a8be0"/>
+            <stop offset="100%" stop-color="#9b7bef"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="46" fill="url(#logoCircle)" stroke="#cfe0f5" stroke-width="2"/>
+        <path d="M18,58 C28,40 40,40 48,54 C56,68 66,36 80,28" fill="none" stroke="url(#waveGrad)" stroke-width="5" stroke-linecap="round" opacity="0.35"/>
+        <path d="M18,65 C28,45 40,45 48,59 C56,73 66,42 80,34" fill="none" stroke="url(#waveGrad)" stroke-width="6.5" stroke-linecap="round"/>
+        <circle cx="18" cy="65" r="5.5" fill="#22c3b5"/>
+        <circle cx="80" cy="34" r="5.5" fill="#9b7bef"/>
+      </svg>
+      <span class="brand-name">auria<span class="brand-plus">+</span></span>
+    </div>
+
+    <div id="error" class="error"></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="username">ユーザー名</label>
+        <input id="username" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">パスワード</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button id="login-btn" type="submit">ログイン</button>
+    </form>
+  </div>
+
+<script>
+  const form = document.getElementById("login-form");
+  const errorEl = document.getElementById("error");
+  const loginBtn = document.getElementById("login-btn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorEl.classList.remove("visible");
+    loginBtn.disabled = true;
+    loginBtn.textContent = "ログイン中...";
+
+    try {
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("username").value.trim(),
+          password: document.getElementById("password").value,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "ログインに失敗しました。");
+      window.location.href = "/";
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.classList.add("visible");
+      loginBtn.disabled = false;
+      loginBtn.textContent = "ログイン";
+    }
+  });
+</script>
+</body>
+</html>

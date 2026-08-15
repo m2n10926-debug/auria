@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>auria+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="logoCircle" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#e6f0fb"/>
+          </radialGradient>
+          <linearGradient id="waveGrad" x1="0%" y1="80%" x2="100%" y2="10%">
+            <stop offset="0%" stop-color="#22c3b5"/>
+            <stop offset="50%" stop-color="#4a8be0"/>
+            <stop offset="100%" stop-color="#9b7bef"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="46" fill="url(#logoCircle)" stroke="#cfe0f5" stroke-width="2"/>
+        <path d="M18,58 C28,40 40,40 48,54 C56,68 66,36 80,28" fill="none" stroke="url(#waveGrad)" stroke-width="5" stroke-linecap="round" opacity="0.35"/>
+        <path d="M18,65 C28,45 40,45 48,59 C56,73 66,42 80,34" fill="none" stroke="url(#waveGrad)" stroke-width="6.5" stroke-linecap="round"/>
+        <circle cx="18" cy="65" r="5.5" fill="#22c3b5"/>
+        <circle cx="80" cy="34" r="5.5" fill="#9b7bef"/>
+      </svg>
+      <span class="brand-name">auria<span class="brand-plus">+</span></span>
+    </div>
+    <div class="user-info">
+      <span id="user-display-name" class="user-display-name"></span>
+      <button id="logout-btn" class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span class="btn-label">ログアウト</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <button class="tab-btn active" data-tab="generate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <span>生成</span>
+      </button>
+      <button class="tab-btn" data-tab="history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>履歴</span>
+      </button>
+      <button class="tab-btn" data-tab="account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>アカウント設定</span>
+      </button>
+      <button class="tab-btn" data-tab="banned">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span>AI設定</span>
+      </button>
+    </nav>
+
+    <main>
+      <section id="tab-generate" class="tab-panel active">
+        <div class="generate-layout">
+          <div class="generate-input">
+            <div class="card">
+              <div class="step-header">
+                <div class="step-title">
+                  <span class="step-badge">STEP 1</span>
+                  <h2>面接メモを入力</h2>
+                </div>
+                <span class="char-count" id="memo-char-count">0文字</span>
+              </div>
+              <p class="step-desc">面接時のメモをそのまま貼り付けてください。AIが内容を整理し、倶楽部コメントを作成します。</p>
+              <textarea id="memo" rows="12" placeholder="面接メモを貼り付けてください"></textarea>
+            </div>
+
+            <div class="card">
+              <div class="step-header">
+                <div class="step-title">
+                  <span class="step-badge">STEP 2</span>
+                  <h2>基本情報を入力</h2>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="name">クラブネーム</label>
+                <input id="name" type="text" placeholder="例: アリサ">
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="age">年齢</label>
+                  <div class="input-with-unit">
+                    <input id="age" type="number" placeholder="例:28">
+                    <span class="unit">歳</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="occupation">職業</label>
+                  <input id="occupation" type="text" placeholder="例:事務職">
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="height">身長</label>
+                  <div class="input-with-unit">
+                    <input id="height" type="number" placeholder="例:158">
+                    <span class="unit">cm</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="weight">体重</label>
+                  <div class="input-with-unit">
+                    <input id="weight" type="number" placeholder="例:48">
+                    <span class="unit">kg</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="bust">バスト</label>
+                  <select id="bust">
+                    <option value="">未選択</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                    <option value="K">K</option>
+                    <option value="L">L</option>
+                    <option value="M">M</option>
+                    <option value="N">N</option>
+                    <option value="O">O</option>
+                    <option value="P">P</option>
+                    <option value="Q">Q</option>
+                    <option value="R">R</option>
+                    <option value="S">S</option>
+                    <option value="T">T</option>
+                    <option value="U">U</option>
+                    <option value="V">V</option>
+                    <option value="W">W</option>
+                    <option value="X">X</option>
+                    <option value="Y">Y</option>
+                    <option value="Z">Z</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="type">交際タイプ</label>
+                  <select id="type">
+                    <option value="">未選択</option>
+                    <option value="A">A（お食事デートのみ希望）</option>
+                    <option value="B1">B1（初回お食事、2回目以降に発展の可能性）</option>
+                    <option value="B2">B2（初回お食事、2回目から発展の可能性）</option>
+                    <option value="C">C（フィーリング次第で初回から発展の可能性）</option>
+                    <option value="D">D（積極的に初回から発展できそう）</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="step-header">
+                <div class="step-title">
+                  <span class="step-badge">STEP 3</span>
+                  <h2>担当者から見た印象</h2>
+                </div>
+              </div>
+              <p class="step-desc">面接メモは基本的に本人からの情報です。それとは別に、面接して感じたこと（性格の読み・外見の印象・印象に残った言動など）があれば書いてください。内容に応じて関連する見出しに自然に反映されます（見出しは限定されません）。</p>
+              <textarea id="impression" rows="5" placeholder="例: 話し方が落ち着いていて聞き上手な印象。相手を気遣う発言が多かった。"></textarea>
+            </div>
+
+            <button id="generate-btn" class="btn-primary btn-large">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span class="btn-label">倶楽部コメントを生成する</span>
+            </button>
+            <p class="helper-text" id="generate-status">AIが魅力を整理し、倶楽部コメントを自動で作成します。</p>
+          </div>
+
+          <div class="generate-output">
+            <div id="consistency-warnings" class="consistency-warnings hidden">
+              <div class="consistency-warnings-title">⚠ メモとの矛盾の可能性</div>
+              <ul id="consistency-warnings-list"></ul>
+            </div>
+
+            <div class="card result-card">
+              <div class="result-card-header">
+                <h2>生成結果</h2>
+                <button id="copy-btn-top" class="btn-icon" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span class="btn-label">コピー</span>
+                </button>
+              </div>
+
+              <div id="warnings" class="warnings hidden"></div>
+
+              <label class="result-sublabel">倶楽部コメント（プレビュー）</label>
+              <textarea id="result" readonly placeholder="ここに生成結果が表示されます"></textarea>
+              <div class="result-footer">
+                <span class="char-count" id="result-char-count"></span>
+              </div>
+            </div>
+
+            <button id="copy-btn" class="btn-primary btn-large" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span class="btn-label">コピーする</span>
+            </button>
+
+            <div class="card recommend-card hidden" id="recommend-card">
+              <div class="result-card-header">
+                <h2>こんな男性におすすめです！</h2>
+                <button id="copy-btn-recommend" class="btn-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span class="btn-label">コピー</span>
+                </button>
+              </div>
+              <textarea id="recommendation" readonly rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-history" class="tab-panel">
+        <div class="card">
+          <div class="history-layout">
+            <div class="history-list">
+              <button id="history-refresh" class="secondary">再読み込み</button>
+              <ul id="history-items"></ul>
+            </div>
+            <div class="history-detail">
+              <div id="history-detail-empty" class="muted">左の一覧から履歴を選んでください</div>
+              <div id="history-detail-content" class="hidden">
+                <h3 id="history-detail-title"></h3>
+                <p class="muted" id="history-detail-date"></p>
+                <p class="muted" id="history-detail-meta"></p>
+                <div id="history-detail-consistency" class="consistency-warnings hidden">
+                  <div class="consistency-warnings-title">⚠ メモとの矛盾の可能性</div>
+                  <ul id="history-detail-consistency-list"></ul>
+                </div>
+                <label>面接メモ</label>
+                <textarea id="history-detail-memo" rows="8" readonly></textarea>
+                <label id="history-detail-impression-label" class="hidden">担当者から見た印象</label>
+                <textarea id="history-detail-impression" rows="4" readonly class="hidden"></textarea>
+                <label>生成結果</label>
+                <textarea id="history-detail-output" rows="14" readonly></textarea>
+                <label id="history-detail-recommend-label" class="hidden">こんな男性におすすめです！</label>
+                <textarea id="history-detail-recommendation" rows="4" readonly class="hidden"></textarea>
+                <button id="history-reuse-btn">この内容を生成タブに戻す</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-account" class="tab-panel">
+        <div class="card">
+          <h2>表示名変更</h2>
+          <div class="field">
+            <label for="display-name-input">表示名</label>
+            <input id="display-name-input" type="text" placeholder="例: 山田">
+          </div>
+          <div class="actions">
+            <button id="display-name-save-btn">変更する</button>
+            <span id="display-name-status" class="status"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>パスワード変更</h2>
+          <div class="field-row">
+            <div class="field">
+              <label for="current-password">現在のパスワード</label>
+              <input id="current-password" type="password">
+            </div>
+            <div class="field">
+              <label for="new-password">新しいパスワード（8文字以上）</label>
+              <input id="new-password" type="password">
+            </div>
+          </div>
+          <div class="actions">
+            <button id="change-password-btn">変更する</button>
+            <span id="change-password-status" class="status"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-banned" class="tab-panel">
+        <div class="card">
+          <h2>自分の紹介文サンプル</h2>
+          <p class="muted">過去に自分で書いた紹介文を登録しておくと、会社共通のサンプルに加えて、あなた自身の文体に寄せた生成の参考として使われます。</p>
+          <div class="field">
+            <label for="my-example-title">タイトル（任意）</label>
+            <input id="my-example-title" type="text" placeholder="例: サキさん">
+          </div>
+          <div class="field">
+            <label for="my-example-content">本文</label>
+            <textarea id="my-example-content" rows="10" placeholder="過去に自分で書いた紹介文を貼り付けてください"></textarea>
+          </div>
+          <div class="actions">
+            <button id="my-example-add-btn">追加</button>
+            <span id="my-example-status" class="status"></span>
+          </div>
+          <ul id="my-example-list" class="my-example-list"></ul>
+        </div>
+
+        <div class="card">
+          <h2>文章の癖・スタイル指示</h2>
+          <p class="muted">文末の「！」の頻度など、生成される文章の癖・トーンの好みを自由に指示できます。見出し構成や禁止ワードなど中核ルールの方が優先されます。</p>
+          <textarea id="style-notes-raw" rows="10"></textarea>
+          <div class="actions">
+            <button id="style-notes-save-btn">保存</button>
+            <button id="style-notes-reload-btn" class="secondary">再読み込み</button>
+            <span id="style-notes-status" class="status"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>禁止ワード</h2>
+          <p class="muted">banned-words.txt の内容を直接編集できます。コメント行（#で始まる行）や見出しはそのまま残せます。</p>
+          <textarea id="banned-raw" rows="20"></textarea>
+          <div class="actions">
+            <button id="banned-save-btn">保存</button>
+            <button id="banned-reload-btn" class="secondary">再読み込み</button>
+            <span id="banned-status" class="status"></span>
+          </div>
+          <div class="field">
+            <label>現在の有効な単語一覧（プレビュー）</label>
+            <div id="banned-preview" class="chip-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

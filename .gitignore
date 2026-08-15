@@ -1,0 +1,13 @@
+node_modules/
+.env
+
+# 個人情報を含むため、メモと生成結果はコミットしない
+memos/*
+!memos/.gitkeep
+!memos/sample.txt
+output/
+history/
+
+# アカウントごとの個人データ・パスワードハッシュ・セッション（個人情報のためコミットしない）
+accounts/
+sessions/
