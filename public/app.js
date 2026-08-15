@@ -80,6 +80,10 @@
   memoEl.addEventListener("input", updateMemoCharCount);
   updateMemoCharCount();
 
+  resultEl.addEventListener("input", () => {
+    resultCharCountEl.textContent = resultEl.value ? `${resultEl.value.length}文字` : "";
+  });
+
   async function generate() {
     const memo = memoEl.value.trim();
     const name = nameEl.value.trim();
