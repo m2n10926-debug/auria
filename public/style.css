@@ -161,6 +161,12 @@ main {
   margin: 0;
 }
 
+.section-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .step-badge {
   background: var(--gradient);
   color: #fff;
@@ -353,6 +359,9 @@ button.secondary:hover { background: #f3f4f6; }
 }
 
 .consistency-warnings-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 700;
   color: #be185d;
   margin-bottom: 6px;
@@ -412,6 +421,12 @@ button.secondary:hover { background: #f3f4f6; }
 .result-card-header h2 {
   font-size: 1.05rem;
   margin: 0;
+}
+
+.result-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .result-sublabel {

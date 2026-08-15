@@ -72,6 +72,7 @@
                   <span class="step-badge">STEP 1</span>
                   <h2>面接メモを入力</h2>
                   <span class="required-badge">必須</span>
+                  <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                 </div>
                 <span class="char-count" id="memo-char-count">0文字</span>
               </div>
@@ -84,6 +85,7 @@
                 <div class="step-title">
                   <span class="step-badge">STEP 2</span>
                   <h2>基本情報を入力</h2>
+                  <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 </div>
               </div>
 
@@ -175,6 +177,7 @@
                 <div class="step-title">
                   <span class="step-badge">STEP 3</span>
                   <h2>担当者から見た印象</h2>
+                  <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </div>
               </div>
               <p class="step-desc">面接メモは基本的に本人からの情報です。それとは別に、面接して感じたこと（性格の読み・外見の印象・印象に残った言動など）があれば書いてください。内容に応じて関連する見出しに自然に反映されます（見出しは限定されません）。</p>
@@ -190,13 +193,27 @@
 
           <div class="generate-output">
             <div id="consistency-warnings" class="consistency-warnings hidden">
-              <div class="consistency-warnings-title">⚠ メモとの矛盾の可能性</div>
+              <div class="consistency-warnings-title"><span>メモとの矛盾の可能性</span><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
               <ul id="consistency-warnings-list"></ul>
             </div>
 
             <div class="card result-card">
               <div class="result-card-header">
-                <h2>生成結果</h2>
+                <div class="result-card-title">
+                  <h2>生成結果</h2>
+                  <svg class="section-icon" viewBox="0 0 24 24" fill="none">
+                    <defs>
+                      <linearGradient id="auroraIconGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                        <stop offset="0" stop-color="#22c3b5"/>
+                        <stop offset="0.5" stop-color="#4a8be0"/>
+                        <stop offset="1" stop-color="#9b7bef"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M2 17c3-4 6 4 9 0s6-4 9 0" stroke="url(#auroraIconGrad)" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M2 12c3-4 6 4 9 0s6-4 9 0" stroke="url(#auroraIconGrad)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                    <path d="M2 7c3-4 6 4 9 0s6-4 9 0" stroke="url(#auroraIconGrad)" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+                  </svg>
+                </div>
                 <button id="copy-btn-top" class="btn-icon" disabled>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span class="btn-label">コピー</span>
@@ -219,7 +236,10 @@
 
             <div class="card recommend-card hidden" id="recommend-card">
               <div class="result-card-header">
-                <h2>こんな男性におすすめです！</h2>
+                <div class="result-card-title">
+                  <h2>こんな男性におすすめです！</h2>
+                  <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                </div>
                 <button id="copy-btn-recommend" class="btn-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span class="btn-label">コピー</span>
@@ -245,7 +265,7 @@
                 <p class="muted" id="history-detail-date"></p>
                 <p class="muted" id="history-detail-meta"></p>
                 <div id="history-detail-consistency" class="consistency-warnings hidden">
-                  <div class="consistency-warnings-title">⚠ メモとの矛盾の可能性</div>
+                  <div class="consistency-warnings-title"><span>メモとの矛盾の可能性</span><svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="#be185d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
                   <ul id="history-detail-consistency-list"></ul>
                 </div>
                 <label>面接メモ</label>
