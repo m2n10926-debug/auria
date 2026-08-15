@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30,
+      "includeFiles": "{public/**,public-auth/**,examples/**,style-guide.md}"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index" }
+  ]
+}

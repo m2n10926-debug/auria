@@ -12,10 +12,13 @@
     "start": "node generate.js",
     "web": "node server.js"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
+    "cookie-session": "^2.1.1",
     "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "session-file-store": "^1.5.0"
+    "pg": "^8.23.0"
   }
 }

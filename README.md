@@ -11,7 +11,8 @@ cp .env.example .env
 ```
 
 `.env` を開き、`ANTHROPIC_API_KEY` に自分のAnthropic APIキーを設定してください。
-Webアプリ（ログイン機能あり）を使う場合は `SESSION_SECRET` も必ず変更してください（生成例は`.env.example`のコメント参照）。
+Webアプリ（ログイン機能あり）を使う場合は `DATABASE_URL`（Postgres接続文字列）と `SESSION_SECRET`
+も必ず設定してください（生成例は`.env.example`のコメント参照）。
 
 ## 使い方
 
@@ -38,7 +39,8 @@ node generate.js --memo memos/sample.txt --name アリサ --out output/アリサ
 ## Webアプリ（画面から使う・アカウントログインあり）
 
 CLIの代わりにブラウザから使うこともできます。複数人で使う場合、アカウントごとに
-ログインし、禁止ワード・文章の癖・自分の過去サンプル・履歴がそれぞれ個別に保存されます。
+ログインし、禁止ワード・文章の癖・自分の過去サンプル・履歴がそれぞれ個別にPostgres DBへ保存されます
+（CLIはこれまで通りローカルファイルのままです。詳細は「アーキテクチャ」節を参照）。
 
 ```bash
 npm run web
@@ -59,7 +61,10 @@ node create-account.js
 `node create-account.js ユーザー名 表示名` のように引数で一部省略も可能です（パスワードは常に対話入力）。
 
 新規アカウントの禁止ワード・文章の癖は、作成時点のルート直下の `banned-words.txt` / `style-notes.txt`
-の内容をコピーして初期値にします。以後はアカウントごとに個別編集できます。
+の内容をコピーして初期値にします。以後はアカウントごとに個別編集できます（DBに保存されます）。
+
+`create-account.js` は `.env` の `DATABASE_URL` を使ってDBに接続するため、ローカルの `.env` を
+本番（Vercel Postgres）の接続文字列に向けておけば、手元から直接本番アカウントを発行できます。
 
 ### ログイン後の画面
 
@@ -76,7 +81,33 @@ CLIとWebアプリは生成ロジックを共有しており（`lib/core.js`）�
 
 ポートを変更したい場合は `PORT` 環境変数を指定してください（例: `PORT=4000 npm run web`）。
 
-### インターネット公開する場合
+### アーキテクチャ（CLI と Webアプリでデータの持ち方が違う）
+
+| | CLI (`generate.js`) | Webアプリ (`server.js`) |
+|---|---|---|
+| 実行環境 | ローカルPC | Vercel（サーバーレス）想定 |
+| 禁止ワード・文章の癖 | ルート直下の `banned-words.txt` / `style-notes.txt` | アカウントごとにPostgres DBに保存 |
+| 履歴・個人サンプル | ルート直下の `history/`（ファイル） | Postgres DB（アカウントごと） |
+| ログイン | なし | あり |
+
+`style-guide.md`・`examples/`（会社共通サンプル）は両方から共通で参照する読み取り専用ファイルで、
+DB化していません。
+
+### Vercelへのデプロイ
+
+1. [Vercel](https://vercel.com)でアカウント作成し、このGitHubリポジトリと連携する
+2. VercelプロジェクトにPostgres（Vercel Postgres / Neon）を追加し、接続文字列を取得する
+3. Vercelのプロジェクト設定 → Environment Variablesに、`.env.example`と同じ変数
+   （`ANTHROPIC_API_KEY`, `DATABASE_URL`, `SESSION_SECRET`, `TRUST_PROXY=1` など）を設定する
+4. デプロイ後、ローカルの `.env` の `DATABASE_URL` も同じ接続文字列に設定し、
+   `node create-account.js` で本番用アカウントを発行する
+5. 既存のローカルアカウント（`accounts/`配下）がある場合は、先に
+   `node scripts/migrate-accounts-to-db.js` を実行してDBへ移行しておく（パスワードは引き継がれる）
+
+`vercel.json`で`maxDuration`（生成処理がAPIを2回呼ぶため余裕を持って30秒）と、
+`public/`・`public-auth/`・`examples/`・`style-guide.md`のバンドル対象指定（`includeFiles`）を設定済みです。
+
+### インターネット公開する場合（自前のリバースプロキシ等を使う場合）
 
 - `.env` の `NODE_ENV=production` にすると、Cookieの`secure`属性が有効になります（HTTPS必須）
 - リバースプロキシ（Caddy/nginx等）でHTTPS終端する場合は `TRUST_PROXY=1` を設定してください
@@ -89,15 +120,19 @@ CLIとWebアプリは生成ロジックを共有しており（`lib/core.js`）�
 - `examples/` — 会社共通の過去の紹介文サンプル（few-shot用、匿名化必須。全アカウント共有）
 - `banned-words.txt` / `style-notes.txt` — 禁止ワード/文章の癖のデフォルト値（新規アカウント作成時のシード元。CLIはこのルート直下ファイルをそのまま使う）
 - `lib/core.js` — CLI/Webアプリ共通の生成ロジック
-- `lib/accounts.js` — アカウントごとのデータ分離・パスワード認証
+- `lib/accounts.js` — アカウントごとのデータ分離・パスワード認証（Postgres DB使用）
+- `lib/db.js` — Postgres接続（`pg`の薄いラッパー）
 - `lib/auth.js` — ログイン必須化のミドルウェア
-- `generate.js` — CLIスクリプト（ログイン概念なし）
-- `create-account.js` — 管理者用: ログインアカウント発行CLI
-- `server.js` — Webアプリ（Express）サーバー
+- `generate.js` — CLIスクリプト（ログイン概念なし、ローカルファイルを使用）
+- `create-account.js` — 管理者用: ログインアカウント発行CLI（DBに書き込む）
+- `server.js` — Webアプリ（Express）サーバー本体
+- `api/index.js` — Vercel Serverless Functions用のエントリポイント（`server.js`をそのままexport）
+- `vercel.json` — Vercelのデプロイ設定（タイムアウト・静的ファイルのバンドル指定等）
+- `scripts/schema.sql` — Postgresのテーブル定義
+- `scripts/migrate-accounts-to-db.js` — ローカルaccounts/配下のデータをDBへ移行する一度きりのスクリプト
 - `public-auth/` — ログイン画面（未ログインでもアクセス可能）
 - `public/` — ログイン後のWebアプリ本体（HTML/CSS/JS）
-- `accounts/` — アカウントごとの個人データ（`.gitignore` 対象。パスワードハッシュ・個人サンプル・履歴等を含む）
-- `sessions/` — ログインセッションの永続化先（`.gitignore` 対象）
+- `accounts/` — （移行前の名残）CLI由来のローカルアカウントデータ。Webアプリは現在DBを使うため参照しない
 - `memos/` — CLI用の入力メモ置き場（`.gitignore` 対象。個人情報を含むため外部共有しない）
 - `history/` — CLI用の生成履歴（`.gitignore` 対象。個人情報を含むため外部共有しない）
 

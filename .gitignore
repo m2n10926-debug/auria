@@ -9,5 +9,10 @@ output/
 history/
 
 # アカウントごとの個人データ・パスワードハッシュ・セッション（個人情報のためコミットしない）
+# ※Postgres移行後は accounts/ はローカルCLI用の名残として残り得るが、既にDB化されたため
+#   通常ここには何も生成されない。念のため引き続き除外しておく
 accounts/
 sessions/
+
+# Vercel CLIのローカル設定
+.vercel/

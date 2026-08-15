@@ -87,7 +87,7 @@ async function main() {
   }
 
   try {
-    const { accountId } = accounts.createAccount({ username, displayName, password });
+    const { accountId } = await accounts.createAccount({ username, displayName, password });
     console.log(`\nアカウントを作成しました: ${accountId} (${displayName})`);
     console.log(`このユーザー名とパスワードを本人に伝えてください。`);
   } catch (err) {
