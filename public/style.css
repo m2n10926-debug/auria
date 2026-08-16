@@ -552,7 +552,7 @@ button.secondary:hover { background: #f3f4f6; }
 /* --- 履歴タブ --- */
 .history-layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 24px;
 }
 
@@ -560,12 +560,21 @@ button.secondary:hover { background: #f3f4f6; }
   list-style: none;
   margin: 12px 0 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.history-list li {
+.history-date-header {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin: 10px 0 2px;
+}
+
+.history-date-header:first-child { margin-top: 0; }
+
+.history-list li.history-item {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -575,13 +584,12 @@ button.secondary:hover { background: #f3f4f6; }
   min-width: 0;
 }
 
-.history-list li:hover { border-color: var(--accent); }
-.history-list li.selected { border-color: var(--accent); background: var(--accent-tint); }
+.history-list li.history-item:hover { border-color: var(--accent); }
+.history-list li.history-item.selected { border-color: var(--accent); background: var(--accent-tint); }
 
 .history-list li .top-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 6px;
 }
 
@@ -603,11 +611,20 @@ button.secondary:hover { background: #f3f4f6; }
   border-radius: 999px;
 }
 
-.history-list li .date {
+.history-list li .time {
+  flex-shrink: 0;
+  margin-left: auto;
   color: var(--muted);
   font-size: 0.72rem;
-  margin-top: 4px;
-  display: block;
+}
+
+.history-list li .preview-text {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .history-detail textarea { margin-bottom: 12px; }

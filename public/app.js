@@ -221,6 +221,19 @@
 
   let currentHistoryRecord = null;
 
+  function formatHistoryGroupLabel(d) {
+    const now = new Date();
+    const startOfDay = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+    const diffDays = Math.round((startOfDay(now) - startOfDay(d)) / 86400000);
+    if (diffDays === 0) return "今日";
+    if (diffDays === 1) return "昨日";
+    return `${d.getMonth() + 1}月${d.getDate()}日`;
+  }
+
+  function formatHistoryTime(d) {
+    return d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+  }
+
   async function loadHistory() {
     historyItemsEl.innerHTML = "<li class=\"muted\">読み込み中...</li>";
     try {
@@ -231,12 +244,35 @@
         return;
       }
       historyItemsEl.innerHTML = "";
-      items.forEach((item) => {
+      let lastGroupLabel = null;
+      items.forEach((item, index) => {
+        const createdAt = new Date(item.createdAt);
+        const groupLabel = formatHistoryGroupLabel(createdAt);
+        if (groupLabel !== lastGroupLabel) {
+          const header = document.createElement("li");
+          header.className = "history-date-header";
+          header.textContent = groupLabel;
+          historyItemsEl.appendChild(header);
+          lastGroupLabel = groupLabel;
+        }
+
         const li = document.createElement("li");
+        li.className = "history-item";
         const typeBadge = item.type ? `<span class="type-badge">${escapeHtml(item.type)}</span>` : "";
-        li.innerHTML = `<div class="top-row"><span class="name">${escapeHtml(item.name)}さん</span>${typeBadge}</div><span class="date">${formatDate(item.createdAt)}</span>`;
+        li.innerHTML = `
+          <div class="top-row">
+            <span class="name">${escapeHtml(item.name)}さん</span>
+            ${typeBadge}
+            <span class="time">${formatHistoryTime(createdAt)}</span>
+          </div>
+          <p class="preview-text">${escapeHtml(item.preview || "")}</p>
+        `;
         li.addEventListener("click", () => selectHistory(item.id, li));
         historyItemsEl.appendChild(li);
+
+        if (index === 0) {
+          selectHistory(item.id, li);
+        }
       });
     } catch (err) {
       historyItemsEl.innerHTML = `<li class="muted">読み込みエラー: ${escapeHtml(err.message)}</li>`;
@@ -244,7 +280,7 @@
   }
 
   async function selectHistory(id, liEl) {
-    document.querySelectorAll(".history-list li").forEach((li) => li.classList.remove("selected"));
+    document.querySelectorAll(".history-list li.history-item").forEach((li) => li.classList.remove("selected"));
     if (liEl) liEl.classList.add("selected");
 
     const res = await fetch(`/api/history/${encodeURIComponent(id)}`);
