@@ -60,6 +60,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         <span>アカウント設定</span>
       </button>
+      <button class="tab-btn" data-tab="about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>アプリ説明</span>
+      </button>
     </nav>
 
     <main>
@@ -365,6 +369,32 @@
             <button id="change-password-btn">変更する</button>
             <span id="change-password-status" class="status"></span>
           </div>
+        </div>
+      </section>
+
+      <section id="tab-about" class="tab-panel">
+        <div class="card">
+          <h2>このアプリについて</h2>
+          <p class="muted">面接メモ・基本情報から、AIが会員紹介文（倶楽部コメント）の下書きを自動生成するツールです。生成結果は必ず人の目で確認・修正してからご利用ください。</p>
+        </div>
+
+        <div class="card">
+          <h2>注意事項：性的な表現について</h2>
+          <p class="muted">
+            このアプリでは、会員紹介文に直接的な性表現を含めることはできません。これは文章の癖・スタイル指示などで
+            変更できる設定ではなく、常に適用される制限です。
+          </p>
+          <p class="muted">理由は次の通りです。</p>
+          <ul class="about-list">
+            <li>生成される紹介文は実在する会員の情報をもとに作成されます。ご本人の同意なく、性的な内容を含む文章を作成することは適切ではありません。</li>
+            <li>「交際タイプ」など内部的に扱う情報についても、出力する文章では婉曲的な表現にとどめるルールになっています。</li>
+            <li>AIモデル自体にも独自の安全基準があり、実在しうる個人に関する性的な表現の生成には対応していません。</li>
+          </ul>
+          <p class="muted">
+            「もっと印象に残る・魅力が伝わる文章にしたい」というご要望であれば、「作成ルール」の
+            文章の癖・スタイル指示で、比喩表現や具体的なエピソードを増やす方向での調整は可能です。
+            性的な表現を含める形でのご要望には対応できませんので、あらかじめご了承ください。
+          </p>
         </div>
       </section>
 

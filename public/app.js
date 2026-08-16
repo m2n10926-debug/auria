@@ -40,6 +40,9 @@
       displayNameInput.value = currentUser ? currentUser.displayName : "";
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-account .card")));
     }
+    if (name === "about") {
+      playFadeInSequence(Array.from(document.querySelectorAll("#tab-about .card")));
+    }
     if (name === "banned") {
       loadHeadingStructure();
       loadBannedWords();

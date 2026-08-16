@@ -372,6 +372,17 @@ button.secondary:hover { background: #f3f4f6; }
 .muted { color: var(--muted); font-size: 0.9rem; }
 .small-hint { font-size: 0.78rem; margin: 6px 0 0; }
 
+.about-list {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 4px 0 12px;
+  padding-left: 20px;
+}
+
+.about-list li {
+  margin-bottom: 8px;
+}
+
 .warnings {
   background: var(--warn-bg);
   border: 1px solid var(--warn-border);
