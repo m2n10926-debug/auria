@@ -311,7 +311,7 @@
     activateTab("generate");
   });
 
-  // --- 生成構成のカスタマイズ ---
+  // --- コメント構成のカスタマイズ ---
   const headingListEl = document.getElementById("heading-structure-list");
   const headingNewNameEl = document.getElementById("heading-new-name");
   const headingNewGuidanceEl = document.getElementById("heading-new-guidance");
