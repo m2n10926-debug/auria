@@ -48,7 +48,11 @@
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-banned .card")));
     }
     if (name === "generate") {
-      playFadeInSequence(Array.from(document.querySelectorAll("#tab-generate .generate-input .card")));
+      playFadeInSequence([
+        ...document.querySelectorAll("#tab-generate .generate-input .card"),
+        resultCardEl,
+        copyBtn,
+      ]);
     }
   }
 
@@ -756,5 +760,9 @@
     return d.toLocaleString("ja-JP");
   }
 
-  playFadeInSequence(Array.from(document.querySelectorAll("#tab-generate .generate-input .card")));
+  playFadeInSequence([
+    ...document.querySelectorAll("#tab-generate .generate-input .card"),
+    resultCardEl,
+    copyBtn,
+  ]);
 })();
