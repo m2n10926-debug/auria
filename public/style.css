@@ -33,7 +33,7 @@ body {
 .topbar {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(120deg, #cdf3ec 0%, #cfe6fb 45%, #e3d9f7 100%);
+  background: linear-gradient(120deg, #c3efe6 0%, #c2ddf9 45%, #ded0f5 100%);
   border-bottom: 1px solid var(--border);
   padding: 20px 32px;
   display: flex;
@@ -41,17 +41,34 @@ body {
   justify-content: space-between;
 }
 
-.topbar::before {
+.topbar::before,
+.topbar::after {
   content: "";
   position: absolute;
-  inset: -40% -5%;
-  background-image:
-    radial-gradient(ellipse 32% 220% at 2% 115%, rgba(45, 212, 191, 0.4), transparent 70%),
-    radial-gradient(ellipse 30% 220% at 26% -60%, rgba(56, 189, 248, 0.4), transparent 70%),
-    radial-gradient(ellipse 32% 220% at 55% 120%, rgba(167, 139, 250, 0.35), transparent 70%),
-    radial-gradient(ellipse 30% 220% at 80% -50%, rgba(45, 212, 191, 0.3), transparent 70%),
-    radial-gradient(ellipse 30% 220% at 100% 110%, rgba(56, 189, 248, 0.35), transparent 70%);
   pointer-events: none;
+}
+
+.topbar::before {
+  inset: -70% -10%;
+  filter: blur(30px);
+  background-image:
+    radial-gradient(ellipse 24% 320% at -2% 135%, rgba(20, 184, 166, 0.65), transparent 68%),
+    radial-gradient(ellipse 22% 320% at 20% -95%, rgba(14, 165, 233, 0.6), transparent 68%),
+    radial-gradient(ellipse 24% 320% at 42% 135%, rgba(155, 123, 239, 0.55), transparent 68%),
+    radial-gradient(ellipse 22% 320% at 64% -95%, rgba(20, 184, 166, 0.5), transparent 68%),
+    radial-gradient(ellipse 24% 320% at 86% 135%, rgba(14, 165, 233, 0.55), transparent 68%),
+    radial-gradient(ellipse 22% 320% at 104% -95%, rgba(155, 123, 239, 0.5), transparent 68%);
+}
+
+.topbar::after {
+  inset: -30% -5%;
+  filter: blur(12px);
+  opacity: 0.75;
+  background-image:
+    radial-gradient(ellipse 16% 260% at 8% -70%, rgba(94, 234, 212, 0.55), transparent 70%),
+    radial-gradient(ellipse 16% 260% at 34% 160%, rgba(129, 140, 248, 0.4), transparent 70%),
+    radial-gradient(ellipse 16% 260% at 60% -70%, rgba(56, 189, 248, 0.5), transparent 70%),
+    radial-gradient(ellipse 16% 260% at 88% 160%, rgba(94, 234, 212, 0.4), transparent 70%);
 }
 
 .topbar > * {
@@ -104,14 +121,33 @@ body {
 }
 
 .sidebar {
+  position: relative;
+  overflow: hidden;
   width: 200px;
   flex-shrink: 0;
-  background: linear-gradient(165deg, #ddf5ef 0%, #dcecfb 55%, #ece3f9 100%);
+  background: linear-gradient(165deg, #d4f2ea 0%, #d2e4fa 55%, #e6d9f6 100%);
   border-right: 1px solid var(--border);
   padding: 20px 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: -15% -50%;
+  filter: blur(26px);
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 90% 22% at 120% 6%, rgba(20, 184, 166, 0.4), transparent 70%),
+    radial-gradient(ellipse 90% 22% at -20% 42%, rgba(14, 165, 233, 0.35), transparent 70%),
+    radial-gradient(ellipse 90% 22% at 120% 78%, rgba(155, 123, 239, 0.35), transparent 70%);
+}
+
+.sidebar > * {
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar .tab-btn {
@@ -843,12 +879,16 @@ button.secondary:hover { background: #f3f4f6; }
 }
 
 .actions button:not(.btn-primary) {
-  background: var(--accent-solid);
+  background: var(--aurora-gradient);
   color: #fff;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 0.9rem;
+}
+
+.actions button:not(.btn-primary):not(.secondary):hover {
+  filter: brightness(1.05);
 }
 
 .actions button.secondary {
