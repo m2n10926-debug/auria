@@ -76,6 +76,12 @@
   const copyBtnRecommend = document.getElementById("copy-btn-recommend");
   const auroraIconWrapEl = document.getElementById("aurora-icon-wrap");
 
+  const INCLUDE_CONCERNS_STORAGE_KEY = "auria:include-concerns";
+  includeConcernsEl.checked = localStorage.getItem(INCLUDE_CONCERNS_STORAGE_KEY) === "1";
+  includeConcernsEl.addEventListener("change", () => {
+    localStorage.setItem(INCLUDE_CONCERNS_STORAGE_KEY, includeConcernsEl.checked ? "1" : "0");
+  });
+
   function updateMemoCharCount() {
     memoCharCountEl.textContent = `${memoEl.value.length}文字`;
   }
