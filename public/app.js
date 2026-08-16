@@ -233,7 +233,8 @@
       historyItemsEl.innerHTML = "";
       items.forEach((item) => {
         const li = document.createElement("li");
-        li.innerHTML = `<span class="name">${escapeHtml(item.name)}さん</span><span class="date">${formatDate(item.createdAt)}</span>`;
+        const typeBadge = item.type ? `<span class="type-badge">${escapeHtml(item.type)}</span>` : "";
+        li.innerHTML = `<div class="top-row"><span class="name">${escapeHtml(item.name)}さん</span>${typeBadge}</div><span class="date">${formatDate(item.createdAt)}</span>`;
         li.addEventListener("click", () => selectHistory(item.id, li));
         historyItemsEl.appendChild(li);
       });
