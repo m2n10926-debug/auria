@@ -38,12 +38,14 @@
     if (name === "history") loadHistory();
     if (name === "account") {
       displayNameInput.value = currentUser ? currentUser.displayName : "";
+      playFadeInSequence(Array.from(document.querySelectorAll("#tab-account .card")));
     }
     if (name === "banned") {
       loadHeadingStructure();
       loadBannedWords();
       loadStyleNotes();
       loadMyExamples();
+      playFadeInSequence(Array.from(document.querySelectorAll("#tab-banned .card")));
     }
   }
 
@@ -79,12 +81,14 @@
   const resultTitleEl = document.getElementById("result-title");
   const resultCardEl = document.getElementById("result-card");
 
-  function playFadeInSequence(elements) {
+  function playFadeInSequence(elements, options = {}) {
+    const stagger = options.stagger ?? 90;
+    const maxDelay = options.maxDelay ?? 600;
     const visible = elements.filter((el) => el && !el.classList.contains("hidden"));
     visible.forEach((el, i) => {
       el.classList.remove("fade-in-card");
       void el.offsetWidth;
-      el.style.animationDelay = `${i * 90}ms`;
+      el.style.animationDelay = `${Math.min(i * stagger, maxDelay)}ms`;
       el.classList.add("fade-in-card");
     });
   }
@@ -303,6 +307,8 @@
           selectHistory(item.id, li);
         }
       });
+
+      playFadeInSequence(Array.from(historyItemsEl.children), { stagger: 50, maxDelay: 500 });
     } catch (err) {
       historyItemsEl.innerHTML = `<li class="muted">読み込みエラー: ${escapeHtml(err.message)}</li>`;
     }
