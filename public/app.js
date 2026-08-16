@@ -77,6 +77,17 @@
   const copyBtnRecommend = document.getElementById("copy-btn-recommend");
   const auroraIconWrapEl = document.getElementById("aurora-icon-wrap");
   const resultTitleEl = document.getElementById("result-title");
+  const resultCardEl = document.getElementById("result-card");
+
+  function playFadeInSequence(elements) {
+    const visible = elements.filter((el) => el && !el.classList.contains("hidden"));
+    visible.forEach((el, i) => {
+      el.classList.remove("fade-in-card");
+      void el.offsetWidth;
+      el.style.animationDelay = `${i * 90}ms`;
+      el.classList.add("fade-in-card");
+    });
+  }
 
   const INCLUDE_CONCERNS_STORAGE_KEY = "auria:include-concerns";
   includeConcernsEl.checked = localStorage.getItem(INCLUDE_CONCERNS_STORAGE_KEY) === "1";
@@ -139,6 +150,8 @@
       consistencyWarningsListEl.innerHTML = "";
       consistencyWarningsEl.classList.add("hidden");
     }
+
+    playFadeInSequence([consistencyWarningsEl, resultCardEl, copyBtn, recommendCardEl]);
   }
 
   async function generate() {
