@@ -580,6 +580,82 @@ button.secondary:hover { background: #f3f4f6; }
 
 .history-detail textarea { margin-bottom: 12px; }
 
+/* --- 見出し構成のカスタマイズ --- */
+.heading-structure-list {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+}
+
+.heading-structure-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.heading-structure-item.disabled {
+  opacity: 0.55;
+}
+
+.heading-structure-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading-move-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.heading-move-btn:disabled { opacity: 0.3; cursor: default; }
+.heading-move-btn:hover:not(:disabled) { background: #f3f4f6; }
+
+.heading-enable-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.heading-enable-toggle input { accent-color: var(--accent-solid); flex-shrink: 0; }
+
+.heading-custom-tag {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.heading-delete-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+}
+
+.heading-delete-btn:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+.heading-guidance-input {
+  margin-top: 8px;
+  width: 100%;
+  font-size: 0.85rem;
+}
+
 /* --- 禁止ワード管理タブ --- */
 .chip-list {
   display: flex;

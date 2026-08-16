@@ -368,6 +368,33 @@
 
       <section id="tab-banned" class="tab-panel">
         <div class="card">
+          <h2>生成構成のカスタマイズ</h2>
+          <p class="muted">
+            基本の見出しの並び替え・オン/オフができます。独自の見出しを追加することもできます（最大5個）。
+            未設定の場合はこれまで通りの標準構成がそのまま使われます。
+            「【懸念点】」は生成画面のチェックボックスで別途ON/OFFするため、ここには表示されません。
+          </p>
+          <ul id="heading-structure-list" class="heading-structure-list"></ul>
+          <div class="field">
+            <label for="heading-new-name">独自の見出しを追加</label>
+            <input id="heading-new-name" type="text" placeholder="例: 趣味">
+          </div>
+          <div class="field">
+            <label for="heading-new-guidance">この見出しに書く内容の指示</label>
+            <textarea id="heading-new-guidance" rows="3" placeholder="例: 面接メモから読み取れる趣味・休日の過ごし方を2〜3文で書く。"></textarea>
+          </div>
+          <div class="actions">
+            <button id="heading-add-btn" class="secondary">追加</button>
+            <span id="heading-add-status" class="status"></span>
+          </div>
+          <div class="actions">
+            <button id="heading-save-btn">保存</button>
+            <button id="heading-reset-btn" class="secondary">標準に戻す</button>
+            <span id="heading-status" class="status"></span>
+          </div>
+        </div>
+
+        <div class="card">
           <h2>自分の紹介文サンプル</h2>
           <p class="muted">過去に自分で書いた紹介文を登録しておくと、会社共通のサンプルに加えて、あなた自身の文体に寄せた生成の参考として使われます。</p>
           <div class="field">

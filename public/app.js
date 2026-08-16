@@ -40,6 +40,7 @@
       displayNameInput.value = currentUser ? currentUser.displayName : "";
     }
     if (name === "banned") {
+      loadHeadingStructure();
       loadBannedWords();
       loadStyleNotes();
       loadMyExamples();
@@ -308,6 +309,163 @@
     impressionEl.value = currentHistoryRecord.impression || "";
     updateMemoCharCount();
     activateTab("generate");
+  });
+
+  // --- 生成構成のカスタマイズ ---
+  const headingListEl = document.getElementById("heading-structure-list");
+  const headingNewNameEl = document.getElementById("heading-new-name");
+  const headingNewGuidanceEl = document.getElementById("heading-new-guidance");
+  const headingAddBtn = document.getElementById("heading-add-btn");
+  const headingAddStatus = document.getElementById("heading-add-status");
+  const headingSaveBtn = document.getElementById("heading-save-btn");
+  const headingResetBtn = document.getElementById("heading-reset-btn");
+  const headingStatus = document.getElementById("heading-status");
+  const MAX_CUSTOM_HEADINGS = 5;
+  let headingStructureState = [];
+
+  function renderHeadingStructureList() {
+    headingListEl.innerHTML = headingStructureState
+      .map((h, i) => {
+        const isFirst = i === 0;
+        const isLast = i === headingStructureState.length - 1;
+        const guidanceBlock = h.custom
+          ? `<textarea class="heading-guidance-input" data-index="${i}" rows="2" placeholder="この見出しに書く内容の指示">${escapeHtml(
+              h.guidance || ""
+            )}</textarea>`
+          : "";
+        return `
+          <li class="heading-structure-item${h.enabled ? "" : " disabled"}">
+            <div class="heading-structure-row">
+              <button type="button" class="heading-move-btn" data-index="${i}" data-dir="up" ${
+          isFirst ? "disabled" : ""
+        }>↑</button>
+              <button type="button" class="heading-move-btn" data-index="${i}" data-dir="down" ${
+          isLast ? "disabled" : ""
+        }>↓</button>
+              <label class="heading-enable-toggle">
+                <input type="checkbox" class="heading-enable-input" data-index="${i}" ${
+          h.enabled ? "checked" : ""
+        }>
+                <span>${escapeHtml(h.key)}</span>
+                ${h.custom ? '<span class="heading-custom-tag">（独自）</span>' : ""}
+              </label>
+              ${h.custom ? `<button type="button" class="heading-delete-btn" data-index="${i}">削除</button>` : ""}
+            </div>
+            ${guidanceBlock}
+          </li>
+        `;
+      })
+      .join("");
+  }
+
+  async function loadHeadingStructure() {
+    headingStatus.textContent = "読み込み中...";
+    try {
+      const res = await fetch("/api/heading-structure");
+      const data = await res.json();
+      headingStructureState = data.headings;
+      renderHeadingStructureList();
+      headingStatus.textContent = data.isCustomized ? "" : "（現在: 標準構成）";
+    } catch (err) {
+      headingStatus.textContent = `読み込みエラー: ${err.message}`;
+    }
+  }
+
+  headingListEl.addEventListener("click", (e) => {
+    const moveBtn = e.target.closest(".heading-move-btn");
+    if (moveBtn) {
+      const i = Number(moveBtn.dataset.index);
+      const j = moveBtn.dataset.dir === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= headingStructureState.length) return;
+      [headingStructureState[i], headingStructureState[j]] = [headingStructureState[j], headingStructureState[i]];
+      renderHeadingStructureList();
+      return;
+    }
+    const delBtn = e.target.closest(".heading-delete-btn");
+    if (delBtn) {
+      const i = Number(delBtn.dataset.index);
+      headingStructureState.splice(i, 1);
+      renderHeadingStructureList();
+    }
+  });
+
+  headingListEl.addEventListener("change", (e) => {
+    if (e.target.classList.contains("heading-enable-input")) {
+      const i = Number(e.target.dataset.index);
+      headingStructureState[i].enabled = e.target.checked;
+    }
+  });
+
+  headingListEl.addEventListener("input", (e) => {
+    if (e.target.classList.contains("heading-guidance-input")) {
+      const i = Number(e.target.dataset.index);
+      headingStructureState[i].guidance = e.target.value;
+    }
+  });
+
+  headingAddBtn.addEventListener("click", () => {
+    const name = headingNewNameEl.value.trim();
+    if (!name) {
+      headingAddStatus.textContent = "見出し名を入力してください。";
+      return;
+    }
+    const customCount = headingStructureState.filter((h) => h.custom).length;
+    if (customCount >= MAX_CUSTOM_HEADINGS) {
+      headingAddStatus.textContent = `独自の見出しは最大${MAX_CUSTOM_HEADINGS}個までです。`;
+      return;
+    }
+    let key = name;
+    if (!key.startsWith("【")) key = `【${key}`;
+    if (!key.endsWith("】")) key = `${key}】`;
+    if (key === "【懸念点】") {
+      headingAddStatus.textContent = "「【懸念点】」は生成画面のチェックボックスで別途ON/OFFします。";
+      return;
+    }
+    if (headingStructureState.some((h) => h.key === key)) {
+      headingAddStatus.textContent = "すでに同じ名前の見出しがあります。";
+      return;
+    }
+    headingStructureState.push({ key, custom: true, enabled: true, guidance: headingNewGuidanceEl.value.trim() });
+    renderHeadingStructureList();
+    headingNewNameEl.value = "";
+    headingNewGuidanceEl.value = "";
+    headingAddStatus.textContent = "追加しました（保存ボタンで確定します）。";
+  });
+
+  headingSaveBtn.addEventListener("click", async () => {
+    headingStatus.textContent = "保存しています...";
+    try {
+      const res = await fetch("/api/heading-structure", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ headings: headingStructureState }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "保存に失敗しました。");
+      headingStructureState = data.headings;
+      renderHeadingStructureList();
+      headingStatus.textContent = "保存しました。";
+    } catch (err) {
+      headingStatus.textContent = `エラー: ${err.message}`;
+    }
+  });
+
+  headingResetBtn.addEventListener("click", async () => {
+    headingStatus.textContent = "標準構成に戻しています...";
+    try {
+      const res = await fetch("/api/heading-structure", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ headings: [] }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "失敗しました。");
+      headingStructureState = data.headings;
+      renderHeadingStructureList();
+      headingStatus.textContent = "標準構成に戻しました。";
+    } catch (err) {
+      headingStatus.textContent = `エラー: ${err.message}`;
+    }
   });
 
   // --- 禁止ワード管理タブ ---

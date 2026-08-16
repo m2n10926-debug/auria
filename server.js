@@ -171,6 +171,33 @@ app.put("/api/style-notes", async (req, res) => {
   }
 });
 
+// --- 見出し構成のカスタマイズ ---
+app.get("/api/heading-structure", async (req, res) => {
+  try {
+    const raw = await accounts.getHeadingStructureRaw(req.session.user.accountId);
+    const structure = core.parseHeadingStructureRaw(raw);
+    res.json({ headings: structure || core.getDefaultHeadingStructure(), isCustomized: !!structure });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/api/heading-structure", async (req, res) => {
+  const { headings } = req.body || {};
+  try {
+    if (!Array.isArray(headings) || headings.length === 0) {
+      await accounts.setHeadingStructureRaw(req.session.user.accountId, "");
+      res.json({ ok: true, headings: core.getDefaultHeadingStructure(), isCustomized: false });
+      return;
+    }
+    const normalized = core.normalizeHeadingStructureInput(headings);
+    await accounts.setHeadingStructureRaw(req.session.user.accountId, JSON.stringify(normalized));
+    res.json({ ok: true, headings: normalized, isCustomized: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // --- 個人サンプル（自分の紹介文サンプル） ---
 app.get("/api/examples/personal", async (req, res) => {
   try {

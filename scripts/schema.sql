@@ -10,6 +10,7 @@ create table if not exists accounts (
   password_hash    text not null,
   banned_words_raw text not null default '',
   style_notes_raw  text not null default '',
+  heading_structure_raw text not null default '',
   session_version  integer not null default 1,
   created_at       timestamptz not null default now(),
   last_login_at    timestamptz
