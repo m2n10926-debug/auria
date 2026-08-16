@@ -80,11 +80,16 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 8px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
 }
 
 .user-display-name {
   font-size: 0.9rem;
-  color: #374151;
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .brand {
@@ -433,8 +438,9 @@ button.secondary:hover { background: #f3f4f6; }
 .btn-icon:hover:not(:disabled) { background: #f3f4f6; color: var(--text); }
 
 #logout-btn {
-  color: #374151;
-  border-color: #9aa5b1;
+  color: #1f2937;
+  border-color: #6b7280;
+  font-weight: 600;
 }
 
 #logout-btn:hover { color: var(--text); border-color: #6b7280; }
@@ -885,6 +891,7 @@ button.secondary:hover { background: #f3f4f6; }
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .actions button:not(.btn-primary):not(.secondary):hover {
