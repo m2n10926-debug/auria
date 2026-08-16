@@ -225,7 +225,7 @@
             <div class="card result-card">
               <div class="result-card-header">
                 <div class="result-card-title">
-                  <h2>生成結果</h2>
+                  <h2 id="result-title">生成結果</h2>
                   <span class="aurora-icon-wrap" id="aurora-icon-wrap">
                     <svg class="section-icon icon-aurora" viewBox="0 0 28 28" fill="none">
                       <defs>
@@ -371,7 +371,7 @@
       <section id="tab-banned" class="tab-panel">
         <div class="card">
           <h2>自分の紹介文サンプル</h2>
-          <p class="muted">過去に自分で書いた紹介文を登録しておくと、会社共通のサンプルに加えて、あなた自身の文体に寄せた生成の参考として使われます。</p>
+          <p class="muted">過去に自分で書いた紹介文を登録しておくと、あなた自身の文体に寄せた生成の参考として使われます。</p>
           <div class="field">
             <label for="my-example-title">タイトル（任意）</label>
             <input id="my-example-title" type="text" placeholder="例: サキさん">
@@ -389,7 +389,7 @@
 
         <div class="card">
           <h2>文章の癖・スタイル指示</h2>
-          <p class="muted">文末の「！」の頻度など、生成される文章の癖・トーンの好みを自由に指示できます。見出し構成や禁止ワードなど中核ルールの方が優先されます。</p>
+          <p class="muted">生成される文章の癖・トーンの好みを自由に指示できます。見出し構成や禁止ワードなど中核ルールの方が優先されます。</p>
           <textarea id="style-notes-raw" rows="10"></textarea>
           <div class="actions">
             <button id="style-notes-save-btn">保存</button>
@@ -400,11 +400,7 @@
 
         <div class="card">
           <h2>コメント構成のカスタマイズ</h2>
-          <p class="muted">
-            基本の見出しの並び替え・オン/オフができます。独自の見出しを追加することもできます（最大5個）。
-            未設定の場合はこれまで通りの標準構成がそのまま使われます。
-            「【懸念点】」は生成画面のチェックボックスで別途ON/OFFするため、ここには表示されません。
-          </p>
+          <p class="muted">基本の見出しの並び替え・オン/オフができます。独自の見出しを追加することもできます（最大5個）。</p>
           <ul id="heading-structure-list" class="heading-structure-list"></ul>
           <div class="field">
             <label for="heading-new-name">独自の見出しを追加</label>
@@ -415,11 +411,12 @@
             <textarea id="heading-new-guidance" rows="3" placeholder="例: 面接メモから読み取れる趣味・休日の過ごし方を2〜3文で書く。"></textarea>
           </div>
           <div class="actions">
-            <button id="heading-add-btn" class="secondary">追加</button>
+            <button id="heading-add-btn" class="secondary">リストに追加</button>
             <span id="heading-add-status" class="status"></span>
           </div>
+          <p class="muted small-hint">「リストに追加」で上のリストに追加されます。並び替え・ON/OFFも含めて、下の「変更を保存」を押すまでは確定しません。</p>
           <div class="actions">
-            <button id="heading-save-btn">保存</button>
+            <button id="heading-save-btn">変更を保存</button>
             <button id="heading-reset-btn" class="secondary">標準に戻す</button>
             <span id="heading-status" class="status"></span>
           </div>
@@ -427,7 +424,7 @@
 
         <div class="card">
           <h2>禁止ワード</h2>
-          <p class="muted">banned-words.txt の内容を直接編集できます。コメント行（#で始まる行）や見出しはそのまま残せます。</p>
+          <p class="muted">生成結果に含めたくないワードを設定できます。</p>
           <textarea id="banned-raw" rows="20"></textarea>
           <div class="actions">
             <button id="banned-save-btn">保存</button>

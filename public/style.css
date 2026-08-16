@@ -370,6 +370,7 @@ button.secondary:hover { background: #f3f4f6; }
 
 .status { font-size: 0.85rem; color: var(--muted); }
 .muted { color: var(--muted); font-size: 0.9rem; }
+.small-hint { font-size: 0.78rem; margin: 6px 0 0; }
 
 .warnings {
   background: var(--warn-bg);
@@ -723,8 +724,13 @@ button.secondary:hover { background: #f3f4f6; }
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   margin: 14px 0;
+}
+
+.actions .status {
+  flex-basis: 100%;
 }
 
 .my-example-list {

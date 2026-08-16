@@ -76,6 +76,7 @@
   const recommendationEl = document.getElementById("recommendation");
   const copyBtnRecommend = document.getElementById("copy-btn-recommend");
   const auroraIconWrapEl = document.getElementById("aurora-icon-wrap");
+  const resultTitleEl = document.getElementById("result-title");
 
   const INCLUDE_CONCERNS_STORAGE_KEY = "auria:include-concerns";
   includeConcernsEl.checked = localStorage.getItem(INCLUDE_CONCERNS_STORAGE_KEY) === "1";
@@ -165,6 +166,7 @@
     copyBtn.disabled = true;
     copyBtnTop.disabled = true;
     if (auroraIconWrapEl) auroraIconWrapEl.classList.add("generating");
+    if (resultTitleEl) resultTitleEl.textContent = "生成中...";
 
     try {
       const res = await fetch("/api/generate", {
@@ -192,6 +194,7 @@
     } finally {
       generateBtn.disabled = false;
       if (auroraIconWrapEl) auroraIconWrapEl.classList.remove("generating");
+      if (resultTitleEl) resultTitleEl.textContent = "生成結果";
     }
   }
 
@@ -483,7 +486,7 @@
     renderHeadingStructureList();
     headingNewNameEl.value = "";
     headingNewGuidanceEl.value = "";
-    headingAddStatus.textContent = "追加しました（保存ボタンで確定します）。";
+    headingAddStatus.textContent = "追加しました（「変更を保存」を押すと確定します）。";
   });
 
   headingSaveBtn.addEventListener("click", async () => {
