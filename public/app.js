@@ -76,6 +76,8 @@
   const includeConcernsEl = document.getElementById("include-concerns");
   const generateBtn = document.getElementById("generate-btn");
   const generateStatus = document.getElementById("generate-status");
+  const genProgressEl = document.getElementById("gen-progress");
+  const genProgressBarEl = document.getElementById("gen-progress-bar");
   const resultEl = document.getElementById("result");
   const copyBtn = document.getElementById("copy-btn");
   const copyBtnTop = document.getElementById("copy-btn-top");
@@ -101,6 +103,29 @@
       el.style.animationDelay = `${Math.min(i * stagger, maxDelay)}ms`;
       el.classList.add("fade-in-card");
     });
+  }
+
+  // 実際の生成時間はサーバーからの逐次進捗が取れないため、典型的な所要時間(約16秒)を
+  // 目安にゆっくり90%まで近づける「見立ての進捗」。完了時に即100%へスナップする。
+  function startFakeProgress() {
+    genProgressEl.classList.remove("hidden");
+    genProgressBarEl.style.transition = "none";
+    genProgressBarEl.style.width = "0%";
+    void genProgressBarEl.offsetWidth;
+    genProgressBarEl.style.transition = "width 16s cubic-bezier(0.1, 0.6, 0.2, 1)";
+    setTimeout(() => {
+      genProgressBarEl.style.width = "90%";
+    }, 20);
+  }
+
+  function finishFakeProgress() {
+    genProgressBarEl.style.transition = "width 0.4s ease";
+    genProgressBarEl.style.width = "100%";
+    setTimeout(() => {
+      genProgressEl.classList.add("hidden");
+      genProgressBarEl.style.transition = "none";
+      genProgressBarEl.style.width = "0%";
+    }, 500);
   }
 
   const INCLUDE_CONCERNS_STORAGE_KEY = "auria:include-concerns";
@@ -194,6 +219,7 @@
     copyBtnTop.disabled = true;
     if (auroraIconWrapEl) auroraIconWrapEl.classList.add("generating");
     if (resultTitleEl) resultTitleEl.textContent = "生成中...";
+    startFakeProgress();
 
     try {
       const res = await fetch("/api/generate", {
@@ -222,6 +248,7 @@
       generateBtn.disabled = false;
       if (auroraIconWrapEl) auroraIconWrapEl.classList.remove("generating");
       if (resultTitleEl) resultTitleEl.textContent = "生成結果";
+      finishFakeProgress();
     }
   }
 

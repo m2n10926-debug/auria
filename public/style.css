@@ -9,6 +9,7 @@
   --accent-solid: #0d9488;
   --accent-tint: #e6fbf8;
   --gradient: linear-gradient(135deg, #14b8a6, #0ea5e9);
+  --aurora-gradient: linear-gradient(135deg, #14b8a6, #0ea5e9, #9b7bef);
   --warn-bg: #fff4e0;
   --warn-border: #e8b95c;
 }
@@ -30,12 +31,32 @@ body {
 
 /* --- トップバー --- */
 .topbar {
-  background: linear-gradient(120deg, #eafaf8 0%, #eaf3fd 55%, #f4eefc 100%);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #cdf3ec 0%, #cfe6fb 45%, #e3d9f7 100%);
   border-bottom: 1px solid var(--border);
   padding: 20px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: -40% -5%;
+  background-image:
+    radial-gradient(ellipse 32% 220% at 2% 115%, rgba(45, 212, 191, 0.4), transparent 70%),
+    radial-gradient(ellipse 30% 220% at 26% -60%, rgba(56, 189, 248, 0.4), transparent 70%),
+    radial-gradient(ellipse 32% 220% at 55% 120%, rgba(167, 139, 250, 0.35), transparent 70%),
+    radial-gradient(ellipse 30% 220% at 80% -50%, rgba(45, 212, 191, 0.3), transparent 70%),
+    radial-gradient(ellipse 30% 220% at 100% 110%, rgba(56, 189, 248, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+.topbar > * {
+  position: relative;
+  z-index: 1;
 }
 
 .user-info {
@@ -85,7 +106,7 @@ body {
 .sidebar {
   width: 200px;
   flex-shrink: 0;
-  background: linear-gradient(165deg, #eafaf8 0%, #eef2fb 55%, #f6f0fc 100%);
+  background: linear-gradient(165deg, #ddf5ef 0%, #dcecfb 55%, #ece3f9 100%);
   border-right: 1px solid var(--border);
   padding: 20px 12px;
   display: flex;
@@ -175,7 +196,7 @@ main {
 }
 
 .step-badge {
-  background: var(--gradient);
+  background: var(--aurora-gradient);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -286,14 +307,14 @@ button {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  background: var(--gradient);
+  background: var(--aurora-gradient);
   color: #fff;
   border: none;
   padding: 14px 20px;
   border-radius: 12px;
   font-size: 1rem;
   font-weight: 700;
-  box-shadow: 0 6px 16px -4px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 6px 16px -4px rgba(139, 92, 246, 0.4);
 }
 
 .btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
@@ -332,6 +353,21 @@ button {
   color: var(--muted);
   font-size: 0.82rem;
   margin: 10px 0 0;
+}
+
+.gen-progress {
+  height: 6px;
+  background: var(--border);
+  border-radius: 999px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.gen-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--aurora-gradient);
+  border-radius: 999px;
 }
 
 button.secondary {
