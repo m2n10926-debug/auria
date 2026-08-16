@@ -93,6 +93,53 @@
     resultCharCountEl.textContent = resultEl.value ? `${resultEl.value.length}文字` : "";
   });
 
+  function renderGeneratedResult(data, statusText) {
+    resultEl.value = data.output || "";
+    resultCharCountEl.textContent = data.output ? `${data.output.length}文字` : "";
+    copyBtn.disabled = !data.output;
+    copyBtnTop.disabled = !data.output;
+    generateStatus.textContent = statusText;
+
+    if (data.recommendation) {
+      recommendationEl.value = data.recommendation;
+      recommendCardEl.classList.remove("hidden");
+    } else {
+      recommendationEl.value = "";
+      recommendCardEl.classList.add("hidden");
+    }
+
+    const warnings = [];
+    if (data.bannedHits && data.bannedHits.length > 0) {
+      warnings.push(`禁止ワードの可能性: ${data.bannedHits.join(", ")}`);
+    }
+    if (data.missingHeadings && data.missingHeadings.length > 0) {
+      warnings.push(`見出しが不足している可能性: ${data.missingHeadings.join(", ")}`);
+    }
+    if (data.closingRepetition) {
+      warnings.push(`【最後に】で「お待ちしております」等が重複している可能性があります`);
+    }
+    if (data.missingRecommendation) {
+      warnings.push(`「おすすめの男性像」が生成されませんでした`);
+    }
+    if (warnings.length > 0) {
+      warningsEl.innerHTML = warnings.map((w) => `<div>⚠ ${escapeHtml(w)}</div>`).join("");
+      warningsEl.classList.remove("hidden");
+    } else {
+      warningsEl.innerHTML = "";
+      warningsEl.classList.add("hidden");
+    }
+
+    if (data.consistencyWarnings && data.consistencyWarnings.length > 0) {
+      consistencyWarningsListEl.innerHTML = data.consistencyWarnings
+        .map((w) => `<li>${escapeHtml(w)}</li>`)
+        .join("");
+      consistencyWarningsEl.classList.remove("hidden");
+    } else {
+      consistencyWarningsListEl.innerHTML = "";
+      consistencyWarningsEl.classList.add("hidden");
+    }
+  }
+
   async function generate() {
     const memo = memoEl.value.trim();
     const name = nameEl.value.trim();
@@ -139,41 +186,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "生成に失敗しました。");
 
-      resultEl.value = data.output;
-      resultCharCountEl.textContent = `${data.output.length}文字`;
-      copyBtn.disabled = false;
-      copyBtnTop.disabled = false;
-      generateStatus.textContent = `完了 (model: ${data.model})`;
-
-      if (data.recommendation) {
-        recommendationEl.value = data.recommendation;
-        recommendCardEl.classList.remove("hidden");
-      }
-
-      const warnings = [];
-      if (data.bannedHits && data.bannedHits.length > 0) {
-        warnings.push(`禁止ワードの可能性: ${data.bannedHits.join(", ")}`);
-      }
-      if (data.missingHeadings && data.missingHeadings.length > 0) {
-        warnings.push(`見出しが不足している可能性: ${data.missingHeadings.join(", ")}`);
-      }
-      if (data.closingRepetition) {
-        warnings.push(`【最後に】で「お待ちしております」等が重複している可能性があります`);
-      }
-      if (data.missingRecommendation) {
-        warnings.push(`「おすすめの男性像」が生成されませんでした`);
-      }
-      if (warnings.length > 0) {
-        warningsEl.innerHTML = warnings.map((w) => `<div>⚠ ${escapeHtml(w)}</div>`).join("");
-        warningsEl.classList.remove("hidden");
-      }
-
-      if (data.consistencyWarnings && data.consistencyWarnings.length > 0) {
-        consistencyWarningsListEl.innerHTML = data.consistencyWarnings
-          .map((w) => `<li>${escapeHtml(w)}</li>`)
-          .join("");
-        consistencyWarningsEl.classList.remove("hidden");
-      }
+      renderGeneratedResult(data, `完了 (model: ${data.model})`);
     } catch (err) {
       generateStatus.textContent = `エラー: ${err.message}`;
     } finally {
@@ -345,6 +358,10 @@
     typeEl.value = currentHistoryRecord.type || "";
     impressionEl.value = currentHistoryRecord.impression || "";
     updateMemoCharCount();
+    renderGeneratedResult(
+      currentHistoryRecord,
+      `履歴から復元しました (${formatDate(currentHistoryRecord.createdAt)})`
+    );
     activateTab("generate");
   });
 
