@@ -47,6 +47,9 @@
       loadMyExamples();
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-banned .card")));
     }
+    if (name === "generate") {
+      playFadeInSequence(Array.from(document.querySelectorAll("#tab-generate .generate-input .card")));
+    }
   }
 
   tabButtons.forEach((btn) => {
@@ -752,4 +755,6 @@
     const d = new Date(iso);
     return d.toLocaleString("ja-JP");
   }
+
+  playFadeInSequence(Array.from(document.querySelectorAll("#tab-generate .generate-input .card")));
 })();
