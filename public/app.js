@@ -60,6 +60,7 @@
   const bustEl = document.getElementById("bust");
   const typeEl = document.getElementById("type");
   const impressionEl = document.getElementById("impression");
+  const includeConcernsEl = document.getElementById("include-concerns");
   const generateBtn = document.getElementById("generate-btn");
   const generateStatus = document.getElementById("generate-status");
   const resultEl = document.getElementById("result");
@@ -125,6 +126,7 @@
           bust: bustEl.value.trim() || null,
           type: typeEl.value || null,
           impression: impressionEl.value.trim() || null,
+          includeConcerns: includeConcernsEl.checked,
         }),
       });
       const data = await res.json();

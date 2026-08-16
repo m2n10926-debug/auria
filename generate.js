@@ -31,6 +31,7 @@ function parseArgs(argv) {
     age: null,
     occupation: null,
     impression: null,
+    concerns: false,
     help: false,
   };
   for (let i = 0; i < argv.length; i++) {
@@ -72,6 +73,9 @@ function parseArgs(argv) {
       case "--impression":
         args.impression = argv[++i];
         break;
+      case "--concerns":
+        args.concerns = true;
+        break;
       case "--help":
       case "-h":
         args.help = true;
@@ -103,6 +107,7 @@ function printHelp() {
       --age    年齢。文脈に応じて【登録動機】等に反映（任意）
       --occupation 職業。文脈に応じて【登録動機】等に反映（任意）
       --impression 担当者から見た印象（本人の発言=メモとは別の、担当者自身の所感）。【性格】に活用（任意）
+      --concerns   【懸念点】見出しを追加する（任意。指定しない場合は6見出しのまま）
   -h, --help   このヘルプを表示
 
 必要な環境変数:
@@ -175,6 +180,7 @@ async function main() {
       age: args.age,
       occupation: args.occupation,
       impression: args.impression,
+      includeConcerns: args.concerns,
     });
   } catch (err) {
     console.error(`エラー: ${err.message}`);

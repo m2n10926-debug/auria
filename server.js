@@ -63,7 +63,8 @@ app.get("/api/session", (req, res) => {
 
 app.post("/api/generate", async (req, res) => {
   const accountId = req.session.user.accountId;
-  const { memo, name, model, height, weight, bust, type, age, occupation, impression } = req.body || {};
+  const { memo, name, model, height, weight, bust, type, age, occupation, impression, includeConcerns } =
+    req.body || {};
   try {
     const result = await core.generateIntro({
       memo,
@@ -76,6 +77,7 @@ app.post("/api/generate", async (req, res) => {
       age,
       occupation,
       impression,
+      includeConcerns: !!includeConcerns,
       accountId,
     });
     const record = await core.saveHistory({

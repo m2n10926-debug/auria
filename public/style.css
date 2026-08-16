@@ -310,6 +310,23 @@ button {
   flex-shrink: 0;
 }
 
+.concerns-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.concerns-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-solid);
+  cursor: pointer;
+}
+
 .helper-text {
   text-align: center;
   color: var(--muted);
