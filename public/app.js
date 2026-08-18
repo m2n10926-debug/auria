@@ -140,6 +140,31 @@
   memoEl.addEventListener("input", updateMemoCharCount);
   updateMemoCharCount();
 
+  // 外部サービス（CRM等）からURLパラメータ経由で基本情報・面接メモを渡された場合、
+  // 各入力欄に自動で反映する（例: ?name=...&memo=...&age=...）。
+  function prefillFromQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    if (![...params.keys()].length) return;
+    const fieldMap = {
+      name: nameEl,
+      memo: memoEl,
+      age: ageEl,
+      occupation: occupationEl,
+      height: heightEl,
+      weight: weightEl,
+      bust: bustEl,
+      type: typeEl,
+      impression: impressionEl,
+    };
+    for (const [key, el] of Object.entries(fieldMap)) {
+      const value = params.get(key);
+      if (value !== null && el) el.value = value;
+    }
+    updateMemoCharCount();
+    window.history.replaceState({}, "", window.location.pathname);
+  }
+  prefillFromQueryParams();
+
   // 生成結果の利用状況計測（コピー・編集の有無。アプリ画面には表示せず、必要なときにDBを直接確認する）
   let trackedRecordId = null;
   let trackedOriginalOutput = "";
