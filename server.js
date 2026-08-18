@@ -127,6 +127,25 @@ app.get("/api/history/:id", async (req, res) => {
   }
 });
 
+// 生成結果の利用状況計測（コピー・編集の有無。アプリ画面には表示しない）
+app.post("/api/history/:id/copied", async (req, res) => {
+  try {
+    await accounts.markHistoryCopied(req.session.user.accountId, req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/history/:id/edited", async (req, res) => {
+  try {
+    await accounts.markHistoryEdited(req.session.user.accountId, req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/banned-words", async (req, res) => {
   try {
     res.json({ raw: await core.readBannedWordsRaw(req.session.user.accountId) });

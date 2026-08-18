@@ -46,6 +46,8 @@ create table if not exists history (
   age                    text,
   occupation             text,
   impression             text,
+  copied_at              timestamptz,
+  edited_at              timestamptz,
   created_at             timestamptz not null default now()
 );
 create index if not exists history_account_id_created_at_idx

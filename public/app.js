@@ -140,8 +140,22 @@
   memoEl.addEventListener("input", updateMemoCharCount);
   updateMemoCharCount();
 
+  // 生成結果の利用状況計測（コピー・編集の有無。アプリ画面には表示せず、必要なときにDBを直接確認する）
+  let trackedRecordId = null;
+  let trackedOriginalOutput = "";
+  let trackedEditReported = false;
+
+  function reportHistoryUsage(kind) {
+    if (!trackedRecordId) return;
+    fetch(`/api/history/${trackedRecordId}/${kind}`, { method: "POST" }).catch(() => {});
+  }
+
   resultEl.addEventListener("input", () => {
     resultCharCountEl.textContent = resultEl.value ? `${resultEl.value.length}文字` : "";
+    if (!trackedEditReported && resultEl.value !== trackedOriginalOutput) {
+      trackedEditReported = true;
+      reportHistoryUsage("edited");
+    }
   });
 
   function renderGeneratedResult(data, statusText) {
@@ -150,6 +164,10 @@
     copyBtn.disabled = !data.output;
     copyBtnTop.disabled = !data.output;
     generateStatus.textContent = statusText;
+
+    trackedRecordId = data.id || null;
+    trackedOriginalOutput = data.output || "";
+    trackedEditReported = false;
 
     if (data.recommendation) {
       recommendationEl.value = data.recommendation;
@@ -265,8 +283,14 @@
     setTimeout(() => (labelEl.textContent = label), 1500);
   }
 
-  copyBtn.addEventListener("click", () => copyResult(copyBtn, resultEl, "コピーする", "コピーしました"));
-  copyBtnTop.addEventListener("click", () => copyResult(copyBtnTop, resultEl, "コピー", "コピーしました"));
+  copyBtn.addEventListener("click", () => {
+    copyResult(copyBtn, resultEl, "コピーする", "コピーしました");
+    reportHistoryUsage("copied");
+  });
+  copyBtnTop.addEventListener("click", () => {
+    copyResult(copyBtnTop, resultEl, "コピー", "コピーしました");
+    reportHistoryUsage("copied");
+  });
   copyBtnRecommend.addEventListener("click", () =>
     copyResult(copyBtnRecommend, recommendationEl, "コピー", "コピーしました")
   );
