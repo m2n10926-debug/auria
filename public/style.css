@@ -111,14 +111,6 @@ body {
   color: #2b3358;
 }
 
-.brand-plus {
-  color: #9b7bef;
-  font-size: 0.55em;
-  font-weight: 700;
-  vertical-align: super;
-  margin-left: 1px;
-}
-
 /* --- 全体レイアウト --- */
 .app-body {
   display: flex;
