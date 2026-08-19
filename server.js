@@ -267,6 +267,20 @@ app.post("/api/change-display-name", async (req, res) => {
   }
 });
 
+// --- アカウント発行（管理者のみ） ---
+app.post("/api/admin/accounts", async (req, res) => {
+  if (!req.session.user.isAdmin) {
+    return res.status(403).json({ error: "この操作を行う権限がありません。" });
+  }
+  const { username, password, displayName } = req.body || {};
+  try {
+    const created = await accounts.createAccount({ username, password, displayName });
+    res.json({ ok: true, account: created });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
   app.listen(PORT, () => {

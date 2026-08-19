@@ -48,6 +48,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <span>アプリ説明</span>
       </button>
+      <button class="tab-btn hidden" data-tab="admin" id="admin-tab-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+        <span>アカウント発行</span>
+      </button>
     </nav>
 
     <main>
@@ -381,6 +385,29 @@
             「作成ルール」の文章の癖・スタイル指示で指定いただければ調整できます。職業の種類・業界
             （看護師、公務員、IT企業勤務 など）を一般的なレベルで伝えることは、いずれの場合も問題ありません。
           </p>
+        </div>
+      </section>
+
+      <section id="tab-admin" class="tab-panel">
+        <div class="card">
+          <h2>アカウント発行</h2>
+          <p class="muted">新しく使い始める担当者のアカウントを発行します。発行後、ユーザー名とパスワードを本人に伝えてください。</p>
+          <div class="field">
+            <label for="admin-new-username">ユーザー名（メールアドレス可）</label>
+            <input id="admin-new-username" type="text" placeholder="例: yamada@example.com">
+          </div>
+          <div class="field">
+            <label for="admin-new-display-name">表示名</label>
+            <input id="admin-new-display-name" type="text" placeholder="例: 山田">
+          </div>
+          <div class="field">
+            <label for="admin-new-password">パスワード（8文字以上）</label>
+            <input id="admin-new-password" type="text" placeholder="例: itsumo5963">
+          </div>
+          <div class="actions">
+            <button id="admin-create-account-btn">発行する</button>
+            <span id="admin-create-account-status" class="status"></span>
+          </div>
         </div>
       </section>
 

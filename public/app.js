@@ -9,6 +9,8 @@
   function renderUser(user) {
     currentUser = user;
     if (user) userDisplayNameEl.textContent = `${user.displayName} さん`;
+    const adminTabBtn = document.getElementById("admin-tab-btn");
+    if (adminTabBtn) adminTabBtn.classList.toggle("hidden", !(user && user.isAdmin));
   }
 
   async function loadSession() {
@@ -42,6 +44,9 @@
     }
     if (name === "about") {
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-about .card")));
+    }
+    if (name === "admin") {
+      playFadeInSequence(Array.from(document.querySelectorAll("#tab-admin .card")));
     }
     if (name === "banned") {
       loadHeadingStructure();
@@ -759,6 +764,39 @@
       displayNameStatus.textContent = "変更しました。";
     } catch (err) {
       displayNameStatus.textContent = `エラー: ${err.message}`;
+    }
+  });
+
+  // --- アカウント発行（管理者のみ） ---
+  const adminNewUsernameEl = document.getElementById("admin-new-username");
+  const adminNewDisplayNameEl = document.getElementById("admin-new-display-name");
+  const adminNewPasswordEl = document.getElementById("admin-new-password");
+  const adminCreateAccountBtn = document.getElementById("admin-create-account-btn");
+  const adminCreateAccountStatus = document.getElementById("admin-create-account-status");
+
+  adminCreateAccountBtn.addEventListener("click", async () => {
+    const username = adminNewUsernameEl.value.trim();
+    const displayName = adminNewDisplayNameEl.value.trim();
+    const password = adminNewPasswordEl.value;
+    if (!username || !displayName || !password) {
+      adminCreateAccountStatus.textContent = "ユーザー名・表示名・パスワードをすべて入力してください。";
+      return;
+    }
+    adminCreateAccountStatus.textContent = "発行しています...";
+    try {
+      const res = await fetch("/api/admin/accounts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, displayName, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "発行に失敗しました。");
+      adminCreateAccountStatus.textContent = `発行しました: ${data.account.accountId} (${data.account.displayName})`;
+      adminNewUsernameEl.value = "";
+      adminNewDisplayNameEl.value = "";
+      adminNewPasswordEl.value = "";
+    } catch (err) {
+      adminCreateAccountStatus.textContent = `エラー: ${err.message}`;
     }
   });
 
