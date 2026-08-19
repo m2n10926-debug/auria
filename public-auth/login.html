@@ -122,6 +122,12 @@
   const errorEl = document.getElementById("error");
   const loginBtn = document.getElementById("login-btn");
 
+  function getSafeNextPath() {
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (!next || !next.startsWith("/") || next.startsWith("//")) return "/";
+    return next;
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorEl.classList.remove("visible");
@@ -139,7 +145,7 @@
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "ログインに失敗しました。");
-      window.location.href = "/";
+      window.location.href = getSafeNextPath();
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.classList.add("visible");
