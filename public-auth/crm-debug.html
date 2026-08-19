@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM連携デバッグ</title>
+<script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+<style>
+  body { margin: 0; padding: 16px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; background: #f3f6f9; color: #1f2937; }
+  h1 { font-size: 1rem; margin: 0 0 12px; }
+  pre { white-space: pre-wrap; word-break: break-all; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-size: 0.8rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h1>CRM連携デバッグ（このページはテスト確認用です）</h1>
+<pre id="output">読み込み中...</pre>
+<script>
+  var outputEl = document.getElementById("output");
+  function show(text) {
+    outputEl.textContent = text;
+  }
+
+  if (typeof ZOHO === "undefined") {
+    show("エラー: Zoho SDKの読み込みに失敗しました。");
+  } else {
+    ZOHO.embeddedApp.on("PageLoad", function (data) {
+      show("PageLoadデータ:\n" + JSON.stringify(data, null, 2) + "\n\nレコードを取得中...");
+
+      var entity = data && data.Entity;
+      var entityId = data && data.EntityId;
+      if (!entity || !entityId) {
+        show(
+          "レコード情報(Entity / EntityId)が取得できませんでした。\n\nPageLoadデータ:\n" +
+            JSON.stringify(data, null, 2)
+        );
+        return;
+      }
+
+      ZOHO.CRM.API.getRecord({ Entity: entity, RecordID: entityId })
+        .then(function (response) {
+          show("レコードの内容:\n" + JSON.stringify(response, null, 2));
+        })
+        .catch(function (err) {
+          show("APIエラー:\n" + JSON.stringify(err, null, 2));
+        });
+    });
+
+    ZOHO.embeddedApp.init().catch(function (err) {
+      show("初期化エラー:\n" + JSON.stringify(err, null, 2));
+    });
+  }
+</script>
+</body>
+</html>
