@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>auria連携</title>
+<script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+<style>
+  body { margin: 0; padding: 16px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; background: #f3f6f9; color: #1f2937; }
+  p { font-size: 0.9rem; line-height: 1.6; }
+  .error { color: #b91c1c; white-space: pre-wrap; word-break: break-all; }
+</style>
+</head>
+<body>
+<p id="status">レコードを読み込んでいます...</p>
+<script>
+  var AURIA_URL = "https://auria-blue.vercel.app/";
+
+  var statusEl = document.getElementById("status");
+  function showError(text) {
+    statusEl.textContent = text;
+    statusEl.classList.add("error");
+  }
+
+  function fieldToString(value) {
+    if (value === null || value === undefined) return "";
+    if (Array.isArray(value)) return value.join("、");
+    if (typeof value === "object") return "";
+    return String(value);
+  }
+
+  if (typeof ZOHO === "undefined") {
+    showError("エラー: Zoho SDKの読み込みに失敗しました。");
+  } else {
+    ZOHO.embeddedApp.on("PageLoad", function (data) {
+      var entity = data && data.Entity;
+      var entityId = data && data.EntityId;
+      if (!entity || !entityId) {
+        showError("エラー: レコード情報が取得できませんでした。");
+        return;
+      }
+
+      ZOHO.CRM.API.getRecord({ Entity: entity, RecordID: entityId })
+        .then(function (response) {
+          var record = response && response.data && response.data[0];
+          if (!record) {
+            showError("エラー: レコードのデータを取得できませんでした。");
+            return;
+          }
+
+          var params = new URLSearchParams();
+          var name = fieldToString(record.club_name_kana);
+          var memo = fieldToString(record.note);
+          if (name) params.set("name", name);
+          if (memo) params.set("memo", memo);
+          if (record.custom_age) params.set("age", fieldToString(record.custom_age));
+          if (record.occupation) params.set("occupation", fieldToString(record.occupation));
+          if (record.height) params.set("height", fieldToString(record.height));
+          if (record.weight) params.set("weight", fieldToString(record.weight));
+          if (record.bust_cup) params.set("bust", fieldToString(record.bust_cup));
+          if (record.dating_type) params.set("type", fieldToString(record.dating_type));
+
+          var url = AURIA_URL + "?" + params.toString();
+          window.open(url, "_blank");
+          statusEl.textContent = "auriaを新しいタブで開きました。このタブは閉じて構いません。";
+        })
+        .catch(function (err) {
+          showError("APIエラー:\n" + JSON.stringify(err, null, 2));
+        });
+    });
+
+    ZOHO.embeddedApp.init().catch(function (err) {
+      showError("初期化エラー:\n" + JSON.stringify(err, null, 2));
+    });
+  }
+</script>
+</body>
+</html>
