@@ -9,10 +9,22 @@
   body { margin: 0; padding: 16px; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; background: #f3f6f9; color: #1f2937; }
   p { font-size: 0.9rem; line-height: 1.6; }
   .error { color: #b91c1c; white-space: pre-wrap; word-break: break-all; }
+  .open-link {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #14b8a6, #0ea5e9);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+  }
 </style>
 </head>
 <body>
 <p id="status">レコードを読み込んでいます...</p>
+<div id="link-container"></div>
 <script>
   var AURIA_URL = "https://auria-blue.vercel.app/";
 
@@ -61,8 +73,14 @@
           if (record.dating_type) params.set("type", fieldToString(record.dating_type));
 
           var url = AURIA_URL + "?" + params.toString();
-          window.open(url, "_blank");
-          statusEl.textContent = "auriaを新しいタブで開きました。このタブは閉じて構いません。";
+          statusEl.textContent = "レコードの情報を準備できました。下のボタンを押してauriaを開いてください。";
+          var link = document.createElement("a");
+          link.className = "open-link";
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = "auriaを開く";
+          document.getElementById("link-container").appendChild(link);
         })
         .catch(function (err) {
           showError("APIエラー:\n" + JSON.stringify(err, null, 2));
