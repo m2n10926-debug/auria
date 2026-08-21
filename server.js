@@ -268,6 +268,17 @@ app.post("/api/change-display-name", async (req, res) => {
 });
 
 // --- アカウント発行（管理者のみ） ---
+app.get("/api/admin/accounts", async (req, res) => {
+  if (!req.session.user.isAdmin) {
+    return res.status(403).json({ error: "この操作を行う権限がありません。" });
+  }
+  try {
+    res.json(await accounts.listAccounts());
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post("/api/admin/accounts", async (req, res) => {
   if (!req.session.user.isAdmin) {
     return res.status(403).json({ error: "この操作を行う権限がありません。" });

@@ -714,6 +714,53 @@ button.secondary:hover { background: #f3f4f6; }
   font-size: 0.72rem;
 }
 
+.admin-accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-account-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+
+.admin-account-item .top-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-account-item .name {
+  font-weight: bold;
+}
+
+.admin-account-item .type-badge {
+  flex-shrink: 0;
+  background: var(--accent-tint);
+  color: var(--accent-solid);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.admin-account-item .time {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.admin-account-item .preview-text {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .history-list li .preview-text {
   margin: 4px 0 0;
   color: var(--muted);

@@ -46,6 +46,7 @@
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-about .card")));
     }
     if (name === "admin") {
+      loadAdminAccounts();
       playFadeInSequence(Array.from(document.querySelectorAll("#tab-admin .card")));
     }
     if (name === "banned") {
@@ -768,6 +769,36 @@
   });
 
   // --- アカウント発行（管理者のみ） ---
+  const adminAccountsListEl = document.getElementById("admin-accounts-list");
+
+  async function loadAdminAccounts() {
+    adminAccountsListEl.innerHTML = '<p class="muted">読み込み中...</p>';
+    try {
+      const res = await fetch("/api/admin/accounts");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "読み込みに失敗しました。");
+      if (!data.length) {
+        adminAccountsListEl.innerHTML = '<p class="muted">アカウントがありません。</p>';
+        return;
+      }
+      adminAccountsListEl.innerHTML = data
+        .map(
+          (a) => `
+        <div class="admin-account-item">
+          <div class="top-row">
+            <span class="name">${escapeHtml(a.displayName)}</span>
+            ${a.isAdmin ? '<span class="type-badge">管理者</span>' : ""}
+            <span class="time">${a.lastLoginAt ? `最終ログイン: ${formatDate(a.lastLoginAt)}` : "未ログイン"}</span>
+          </div>
+          <p class="preview-text">${escapeHtml(a.accountId)}（作成日: ${formatDate(a.createdAt)}）</p>
+        </div>`
+        )
+        .join("");
+    } catch (err) {
+      adminAccountsListEl.innerHTML = `<p class="muted">エラー: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
   const adminNewUsernameEl = document.getElementById("admin-new-username");
   const adminNewDisplayNameEl = document.getElementById("admin-new-display-name");
   const adminNewPasswordEl = document.getElementById("admin-new-password");
@@ -795,6 +826,7 @@
       adminNewUsernameEl.value = "";
       adminNewDisplayNameEl.value = "";
       adminNewPasswordEl.value = "";
+      loadAdminAccounts();
     } catch (err) {
       adminCreateAccountStatus.textContent = `エラー: ${err.message}`;
     }
