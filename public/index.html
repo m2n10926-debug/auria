@@ -58,11 +58,6 @@
       <section id="tab-generate" class="tab-panel active">
         <div class="generate-layout">
           <div class="generate-input">
-            <button id="clear-all-btn" class="clear-all-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
-              <span>すべてクリア</span>
-            </button>
-
             <div class="card">
               <div class="step-header">
                 <div class="step-title">
@@ -237,10 +232,16 @@
                     <span class="aurora-icon-sweep"></span>
                   </span>
                 </div>
-                <button id="copy-btn-top" class="btn-icon" disabled>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span class="btn-label">コピー</span>
-                </button>
+                <div class="result-card-header-actions">
+                  <button id="clear-all-btn" class="btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path></svg>
+                    <span class="btn-label">すべてクリア</span>
+                  </button>
+                  <button id="copy-btn-top" class="btn-icon" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span class="btn-label">コピー</span>
+                  </button>
+                </div>
               </div>
 
               <div id="warnings" class="warnings hidden"></div>

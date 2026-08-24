@@ -357,25 +357,11 @@ button {
   font-size: 1.05rem;
 }
 
-.clear-all-btn {
+.result-card-header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
-  align-self: flex-end;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 0.8rem;
-  padding: 4px 2px;
-  margin-bottom: 8px;
+  gap: 8px;
 }
-
-.clear-all-btn svg {
-  width: 14px;
-  height: 14px;
-}
-
-.clear-all-btn:hover { color: var(--text); }
 
 .btn-primary svg {
   width: 18px;
