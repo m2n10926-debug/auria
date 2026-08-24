@@ -207,6 +207,13 @@ app.post("/api/style-notes/chat", async (req, res) => {
       res.status(400).json({ error: "指示の内容をうまく理解できませんでした。もう少し具体的に書いてみてください。" });
       return;
     }
+    const changed = JSON.stringify(newItems) !== JSON.stringify(currentItems);
+    if (!changed) {
+      res
+        .status(400)
+        .json({ error: "指示の内容を認識できませんでした。もう少し具体的に書いてみてください。" });
+      return;
+    }
     const newRaw = core.buildStyleNotesRawFromItems(newItems);
     await core.writeStyleNotesRaw(newRaw, accountId);
     res.json({ ok: true, items: newItems });
