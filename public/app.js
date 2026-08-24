@@ -822,6 +822,7 @@
             <span class="time">${a.lastLoginAt ? `最終ログイン: ${formatDate(a.lastLoginAt)}` : "未ログイン"}</span>
           </div>
           <p class="preview-text">${escapeHtml(a.accountId)}（作成日: ${formatDate(a.createdAt)}）</p>
+          <p class="preview-text">ログイン回数: ${a.loginCount}回　生成回数: ${a.generateCount}回　コピーされた件数: ${a.copiedCount}件　編集された件数: ${a.editedCount}件</p>
         </div>`
         )
         .join("");

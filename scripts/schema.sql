@@ -53,3 +53,11 @@ create table if not exists history (
 );
 create index if not exists history_account_id_created_at_idx
   on history (account_id, created_at desc);
+
+create table if not exists login_events (
+  id         uuid primary key default gen_random_uuid(),
+  account_id text not null references accounts(account_id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+create index if not exists login_events_account_id_created_at_idx
+  on login_events (account_id, created_at desc);
