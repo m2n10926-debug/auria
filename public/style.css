@@ -357,20 +357,25 @@ button {
   font-size: 1.05rem;
 }
 
-.generate-actions {
+.clear-all-btn {
   display: flex;
-  align-items: stretch;
-  gap: 10px;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 4px 2px;
+  margin-bottom: 8px;
 }
 
-.generate-actions .btn-primary {
-  width: auto;
-  flex: 1;
+.clear-all-btn svg {
+  width: 14px;
+  height: 14px;
 }
 
-.generate-actions button.secondary {
-  flex-shrink: 0;
-}
+.clear-all-btn:hover { color: var(--text); }
 
 .btn-primary svg {
   width: 18px;

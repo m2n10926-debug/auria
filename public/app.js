@@ -303,8 +303,8 @@
 
   generateBtn.addEventListener("click", generate);
 
-  const clearInputsBtn = document.getElementById("clear-inputs-btn");
-  clearInputsBtn.addEventListener("click", () => {
+  const clearAllBtn = document.getElementById("clear-all-btn");
+  clearAllBtn.addEventListener("click", () => {
     memoEl.value = "";
     nameEl.value = "";
     ageEl.value = "";
@@ -315,6 +315,23 @@
     typeEl.value = "";
     impressionEl.value = "";
     updateMemoCharCount();
+
+    warningsEl.classList.add("hidden");
+    warningsEl.innerHTML = "";
+    consistencyWarningsEl.classList.add("hidden");
+    consistencyWarningsListEl.innerHTML = "";
+    recommendCardEl.classList.add("hidden");
+    recommendationEl.value = "";
+    resultEl.value = "";
+    resultCharCountEl.textContent = "";
+    copyBtn.disabled = true;
+    copyBtnTop.disabled = true;
+    generateStatus.textContent = "";
+    if (resultTitleEl) resultTitleEl.textContent = "生成結果";
+
+    trackedRecordId = null;
+    trackedOriginalOutput = "";
+    trackedEditReported = false;
   });
 
   async function copyResult(btn, sourceEl, label, doneLabel) {
