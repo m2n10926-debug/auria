@@ -148,21 +148,24 @@ app.post("/api/history/:id/edited", async (req, res) => {
 
 app.get("/api/banned-words", async (req, res) => {
   try {
-    res.json({ raw: await core.readBannedWordsRaw(req.session.user.accountId) });
+    const raw = await core.readBannedWordsRaw(req.session.user.accountId);
+    const globalWords = core.loadGlobalBannedWords();
+    const personalWords = core.parseBannedWordsText(raw).filter((w) => !globalWords.includes(w));
+    res.json({ globalWords, personalWords });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 app.put("/api/banned-words", async (req, res) => {
-  const { raw } = req.body || {};
-  if (typeof raw !== "string") {
-    res.status(400).json({ error: "raw (文字列) が必要です。" });
+  const { personalWords } = req.body || {};
+  if (!Array.isArray(personalWords) || !personalWords.every((w) => typeof w === "string")) {
+    res.status(400).json({ error: "personalWords (文字列の配列) が必要です。" });
     return;
   }
   try {
-    await core.writeBannedWordsRaw(raw, req.session.user.accountId);
-    res.json({ ok: true });
+    await core.writeBannedWordsRaw(personalWords.join("\n"), req.session.user.accountId);
+    res.json({ ok: true, personalWords });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

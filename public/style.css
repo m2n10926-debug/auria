@@ -913,6 +913,32 @@ button.secondary:hover { background: #f3f4f6; }
   font-size: 0.8rem;
 }
 
+.banned-subgroup-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 10px 0 4px;
+}
+
+.banned-subgroup-label:first-child { margin-top: 0; }
+
+.chip.removable {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+}
+
+.chip.removable button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.chip.removable button:hover { color: var(--text); }
+
 .actions {
   display: flex;
   align-items: center;

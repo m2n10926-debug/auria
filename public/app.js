@@ -668,20 +668,27 @@
   });
 
   // --- 禁止ワード管理タブ ---
-  const bannedRawEl = document.getElementById("banned-raw");
-  const bannedSaveBtn = document.getElementById("banned-save-btn");
-  const bannedReloadBtn = document.getElementById("banned-reload-btn");
+  const bannedGlobalListEl = document.getElementById("banned-global-list");
+  const bannedPersonalListEl = document.getElementById("banned-personal-list");
+  const bannedNewWordInput = document.getElementById("banned-new-word-input");
+  const bannedAddWordBtn = document.getElementById("banned-add-word-btn");
   const bannedStatus = document.getElementById("banned-status");
-  const bannedPreviewEl = document.getElementById("banned-preview");
 
-  function renderBannedPreview(raw) {
-    const words = raw
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line && !line.startsWith("#"));
-    bannedPreviewEl.innerHTML = words.length
-      ? words.map((w) => `<span class="chip">${escapeHtml(w)}</span>`).join("")
+  function renderBannedWords(globalWords, personalWords) {
+    bannedGlobalListEl.innerHTML = globalWords.length
+      ? globalWords.map((w) => `<span class="chip">${escapeHtml(w)}</span>`).join("")
       : '<span class="muted">単語がありません</span>';
+    bannedPersonalListEl.innerHTML = personalWords.length
+      ? personalWords
+          .map(
+            (w) => `
+        <span class="chip removable">
+          ${escapeHtml(w)}
+          <button type="button" data-word="${escapeHtml(w)}" aria-label="この単語を削除">×</button>
+        </span>`
+          )
+          .join("")
+      : '<span class="muted">まだ追加したワードがありません</span>';
   }
 
   async function loadBannedWords() {
@@ -689,33 +696,69 @@
     try {
       const res = await fetch("/api/banned-words");
       const data = await res.json();
-      bannedRawEl.value = data.raw;
-      renderBannedPreview(data.raw);
+      renderBannedWords(data.globalWords || [], data.personalWords || []);
       bannedStatus.textContent = "";
     } catch (err) {
       bannedStatus.textContent = `読み込みエラー: ${err.message}`;
     }
   }
 
-  bannedRawEl.addEventListener("input", () => renderBannedPreview(bannedRawEl.value));
+  async function saveBannedPersonalWords(personalWords) {
+    const res = await fetch("/api/banned-words", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ personalWords }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "保存に失敗しました。");
+    return data;
+  }
 
-  bannedSaveBtn.addEventListener("click", async () => {
-    bannedStatus.textContent = "保存しています...";
+  bannedPersonalListEl.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-word]");
+    if (!btn) return;
+    const currentWords = Array.from(bannedPersonalListEl.querySelectorAll("button[data-word]")).map(
+      (b) => b.dataset.word
+    );
+    const newWords = currentWords.filter((w) => w !== btn.dataset.word);
+    bannedStatus.textContent = "削除しています...";
     try {
-      const res = await fetch("/api/banned-words", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ raw: bannedRawEl.value }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "保存に失敗しました。");
-      bannedStatus.textContent = "保存しました。";
+      await saveBannedPersonalWords(newWords);
+      await loadBannedWords();
+      bannedStatus.textContent = "削除しました。";
     } catch (err) {
       bannedStatus.textContent = `エラー: ${err.message}`;
     }
   });
 
-  bannedReloadBtn.addEventListener("click", loadBannedWords);
+  async function addBannedWord() {
+    const word = bannedNewWordInput.value.trim();
+    if (!word) {
+      bannedStatus.textContent = "単語を入力してください。";
+      return;
+    }
+    const currentWords = Array.from(bannedPersonalListEl.querySelectorAll("button[data-word]")).map(
+      (b) => b.dataset.word
+    );
+    if (currentWords.includes(word)) {
+      bannedStatus.textContent = "すでに追加されています。";
+      return;
+    }
+    bannedStatus.textContent = "追加しています...";
+    try {
+      await saveBannedPersonalWords([...currentWords, word]);
+      await loadBannedWords();
+      bannedNewWordInput.value = "";
+      bannedStatus.textContent = "追加しました。";
+    } catch (err) {
+      bannedStatus.textContent = `エラー: ${err.message}`;
+    }
+  }
+
+  bannedAddWordBtn.addEventListener("click", addBannedWord);
+  bannedNewWordInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addBannedWord();
+  });
 
   // --- 自分の紹介文サンプル ---
   const myExampleTitleEl = document.getElementById("my-example-title");

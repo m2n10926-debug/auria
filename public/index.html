@@ -480,17 +480,21 @@
 
         <div class="card">
           <h2>禁止ワード</h2>
-          <p class="muted">生成結果に含めたくないワードを、個人の追加設定として登録できます。これとは別に、運営として常に適用される共通の禁止ワードが自動的に適用されます（そちらはここでは表示・編集できません）。</p>
-          <textarea id="banned-raw" rows="20"></textarea>
-          <div class="actions">
-            <button id="banned-save-btn">保存</button>
-            <button id="banned-reload-btn" class="secondary">再読み込み</button>
-            <span id="banned-status" class="status"></span>
-          </div>
+          <p class="muted">生成結果に含めたくないワードです。下の入力欄から個人で追加できます。</p>
+
           <div class="field">
             <label>現在の有効な単語一覧（プレビュー）</label>
-            <div id="banned-preview" class="chip-list"></div>
+            <p class="banned-subgroup-label">共通（運営が設定・編集はできません）</p>
+            <div id="banned-global-list" class="chip-list"></div>
+            <p class="banned-subgroup-label">自分で追加したワード</p>
+            <div id="banned-personal-list" class="chip-list"></div>
           </div>
+
+          <div class="style-notes-chat-row">
+            <input id="banned-new-word-input" type="text" placeholder="例: 愛人">
+            <button id="banned-add-word-btn">追加</button>
+          </div>
+          <span id="banned-status" class="status"></span>
         </div>
       </section>
     </main>
