@@ -303,6 +303,20 @@
 
   generateBtn.addEventListener("click", generate);
 
+  const clearInputsBtn = document.getElementById("clear-inputs-btn");
+  clearInputsBtn.addEventListener("click", () => {
+    memoEl.value = "";
+    nameEl.value = "";
+    ageEl.value = "";
+    occupationEl.value = "";
+    heightEl.value = "";
+    weightEl.value = "";
+    bustEl.value = "";
+    typeEl.value = "";
+    impressionEl.value = "";
+    updateMemoCharCount();
+  });
+
   async function copyResult(btn, sourceEl, label, doneLabel) {
     const labelEl = btn.querySelector(".btn-label");
     try {

@@ -357,6 +357,21 @@ button {
   font-size: 1.05rem;
 }
 
+.generate-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.generate-actions .btn-primary {
+  width: auto;
+  flex: 1;
+}
+
+.generate-actions button.secondary {
+  flex-shrink: 0;
+}
+
 .btn-primary svg {
   width: 18px;
   height: 18px;
