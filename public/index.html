@@ -445,13 +445,13 @@
 
         <div class="card">
           <h2>文章の癖・スタイル指示</h2>
-          <p class="muted">生成される文章の癖・トーンの好みを自由に指示できます。見出し構成や禁止ワードなど中核ルールの方が優先されます。</p>
-          <textarea id="style-notes-raw" rows="10"></textarea>
-          <div class="actions">
-            <button id="style-notes-save-btn">保存</button>
-            <button id="style-notes-reload-btn" class="secondary">再読み込み</button>
-            <span id="style-notes-status" class="status"></span>
+          <p class="muted">生成される文章の癖・トーンの好みを指示できます。見出し構成や禁止ワードなど中核ルールの方が優先されます。</p>
+          <div id="style-notes-list" class="style-notes-list"></div>
+          <div class="style-notes-chat-row">
+            <input id="style-notes-chat-input" type="text" placeholder="文末の「！」を毎文使うのではなく、3〜5文に1回程度に抑える">
+            <button id="style-notes-chat-send-btn">送信</button>
           </div>
+          <span id="style-notes-status" class="status"></span>
         </div>
 
         <div class="card">

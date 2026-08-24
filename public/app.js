@@ -891,40 +891,91 @@
   });
 
   // --- 文章の癖・スタイル指示タブ ---
-  const styleNotesRawEl = document.getElementById("style-notes-raw");
-  const styleNotesSaveBtn = document.getElementById("style-notes-save-btn");
-  const styleNotesReloadBtn = document.getElementById("style-notes-reload-btn");
+  const styleNotesListEl = document.getElementById("style-notes-list");
+  const styleNotesChatInput = document.getElementById("style-notes-chat-input");
+  const styleNotesChatSendBtn = document.getElementById("style-notes-chat-send-btn");
   const styleNotesStatus = document.getElementById("style-notes-status");
+
+  function renderStyleNoteItems(items) {
+    styleNotesListEl.innerHTML = items.length
+      ? items
+          .map(
+            (item, i) => `
+        <div class="style-notes-item">
+          <span>${escapeHtml(item)}</span>
+          <button type="button" data-index="${i}" aria-label="この指示を削除">×</button>
+        </div>`
+          )
+          .join("")
+      : '<p class="muted">まだ指示がありません。下の欄から追加できます。</p>';
+  }
 
   async function loadStyleNotes() {
     styleNotesStatus.textContent = "読み込み中...";
     try {
       const res = await fetch("/api/style-notes");
       const data = await res.json();
-      styleNotesRawEl.value = data.raw;
+      renderStyleNoteItems(data.items || []);
       styleNotesStatus.textContent = "";
     } catch (err) {
       styleNotesStatus.textContent = `読み込みエラー: ${err.message}`;
     }
   }
 
-  styleNotesSaveBtn.addEventListener("click", async () => {
-    styleNotesStatus.textContent = "保存しています...";
+  styleNotesListEl.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-index]");
+    if (!btn) return;
+    const index = Number(btn.dataset.index);
+    const currentItems = Array.from(styleNotesListEl.querySelectorAll(".style-notes-item span")).map(
+      (el) => el.textContent
+    );
+    const newItems = currentItems.filter((_, i) => i !== index);
+    styleNotesStatus.textContent = "削除しています...";
     try {
       const res = await fetch("/api/style-notes", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ raw: styleNotesRawEl.value }),
+        body: JSON.stringify({ items: newItems }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "保存に失敗しました。");
-      styleNotesStatus.textContent = "保存しました。";
+      if (!res.ok) throw new Error(data.error || "削除に失敗しました。");
+      renderStyleNoteItems(data.items);
+      styleNotesStatus.textContent = "削除しました。";
     } catch (err) {
       styleNotesStatus.textContent = `エラー: ${err.message}`;
     }
   });
 
-  styleNotesReloadBtn.addEventListener("click", loadStyleNotes);
+  async function sendStyleNotesChat() {
+    const message = styleNotesChatInput.value.trim();
+    if (!message) {
+      styleNotesStatus.textContent = "指示を入力してください。";
+      return;
+    }
+    styleNotesChatSendBtn.disabled = true;
+    styleNotesStatus.textContent = "反映しています...";
+    try {
+      const res = await fetch("/api/style-notes/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "反映に失敗しました。");
+      renderStyleNoteItems(data.items);
+      styleNotesChatInput.value = "";
+      styleNotesStatus.textContent = "反映しました。";
+    } catch (err) {
+      styleNotesStatus.textContent = `エラー: ${err.message}`;
+    } finally {
+      styleNotesChatSendBtn.disabled = false;
+    }
+  }
+
+  styleNotesChatSendBtn.addEventListener("click", sendStyleNotesChat);
+  styleNotesChatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendStyleNotesChat();
+  });
 
   // --- ユーティリティ ---
   function escapeHtml(str) {

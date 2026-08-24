@@ -170,21 +170,46 @@ app.put("/api/banned-words", async (req, res) => {
 
 app.get("/api/style-notes", async (req, res) => {
   try {
-    res.json({ raw: await core.readStyleNotesRaw(req.session.user.accountId) });
+    const raw = await core.readStyleNotesRaw(req.session.user.accountId);
+    res.json({ items: core.parseStyleNoteItems(raw) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 app.put("/api/style-notes", async (req, res) => {
-  const { raw } = req.body || {};
-  if (typeof raw !== "string") {
-    res.status(400).json({ error: "raw (文字列) が必要です。" });
+  const { items } = req.body || {};
+  if (!Array.isArray(items) || !items.every((item) => typeof item === "string")) {
+    res.status(400).json({ error: "items (文字列の配列) が必要です。" });
     return;
   }
   try {
+    const raw = core.buildStyleNotesRawFromItems(items);
     await core.writeStyleNotesRaw(raw, req.session.user.accountId);
-    res.json({ ok: true });
+    res.json({ ok: true, items });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/style-notes/chat", async (req, res) => {
+  const { message } = req.body || {};
+  if (!message || !message.trim()) {
+    res.status(400).json({ error: "message が必要です。" });
+    return;
+  }
+  try {
+    const accountId = req.session.user.accountId;
+    const currentRaw = await core.readStyleNotesRaw(accountId);
+    const currentItems = core.parseStyleNoteItems(currentRaw);
+    const newItems = await core.chatUpdateStyleNotes(currentItems, message.trim());
+    if (newItems.length === 0 && currentItems.length > 0) {
+      res.status(400).json({ error: "指示の内容をうまく理解できませんでした。もう少し具体的に書いてみてください。" });
+      return;
+    }
+    const newRaw = core.buildStyleNotesRawFromItems(newItems);
+    await core.writeStyleNotesRaw(newRaw, accountId);
+    res.json({ ok: true, items: newItems });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
