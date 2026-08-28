@@ -146,6 +146,63 @@
   memoEl.addEventListener("input", updateMemoCharCount);
   updateMemoCharCount();
 
+  // --- 面接メモの清書 ---
+  const cleanMemoBtn = document.getElementById("clean-memo-btn");
+  const cleanMemoResultEl = document.getElementById("clean-memo-result");
+  const cleanMemoWarningsEl = document.getElementById("clean-memo-warnings");
+  const cleanMemoTextEl = document.getElementById("clean-memo-text");
+  const cleanMemoAdoptBtn = document.getElementById("clean-memo-adopt-btn");
+  const cleanMemoStatusEl = document.getElementById("clean-memo-status");
+
+  cleanMemoBtn.addEventListener("click", async () => {
+    const memo = memoEl.value.trim();
+    if (!memo) {
+      cleanMemoResultEl.classList.remove("hidden");
+      cleanMemoWarningsEl.classList.add("hidden");
+      cleanMemoTextEl.value = "";
+      cleanMemoStatusEl.textContent = "面接メモを入力してください。";
+      return;
+    }
+    const labelEl = cleanMemoBtn.querySelector(".btn-label");
+    cleanMemoBtn.disabled = true;
+    labelEl.textContent = "清書中...";
+    try {
+      const res = await fetch("/api/clean-memo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ memo }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "清書に失敗しました。");
+
+      cleanMemoTextEl.value = data.cleanedMemo || "";
+      const unclearPoints = (data.unclearPoints || []).filter(
+        (p) => p && !p.includes("特に不明瞭な点はありません")
+      );
+      if (unclearPoints.length > 0) {
+        cleanMemoWarningsEl.innerHTML = unclearPoints.map((p) => `<div>⚠ ${escapeHtml(p)}</div>`).join("");
+        cleanMemoWarningsEl.classList.remove("hidden");
+      } else {
+        cleanMemoWarningsEl.innerHTML = "";
+        cleanMemoWarningsEl.classList.add("hidden");
+      }
+      cleanMemoResultEl.classList.remove("hidden");
+      cleanMemoStatusEl.textContent = "";
+    } catch (err) {
+      cleanMemoResultEl.classList.remove("hidden");
+      cleanMemoStatusEl.textContent = `エラー: ${err.message}`;
+    } finally {
+      cleanMemoBtn.disabled = false;
+      labelEl.textContent = "清書する";
+    }
+  });
+
+  cleanMemoAdoptBtn.addEventListener("click", () => {
+    memoEl.value = cleanMemoTextEl.value;
+    updateMemoCharCount();
+    cleanMemoStatusEl.textContent = "採用しました。";
+  });
+
   // 外部サービス（CRM等）からURLパラメータ経由で基本情報・面接メモを渡された場合、
   // 各入力欄に自動で反映する（例: ?name=...&memo=...&age=...）。
   function prefillFromQueryParams() {
@@ -315,6 +372,12 @@
     typeEl.value = "";
     impressionEl.value = "";
     updateMemoCharCount();
+
+    cleanMemoResultEl.classList.add("hidden");
+    cleanMemoWarningsEl.innerHTML = "";
+    cleanMemoWarningsEl.classList.add("hidden");
+    cleanMemoTextEl.value = "";
+    cleanMemoStatusEl.textContent = "";
 
     warningsEl.classList.add("hidden");
     warningsEl.innerHTML = "";

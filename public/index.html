@@ -74,10 +74,26 @@
                   </svg>
                   <span class="required-badge">必須</span>
                 </div>
-                <span class="char-count" id="memo-char-count">0文字</span>
+                <div class="step-header-actions">
+                  <button id="clean-memo-btn" class="btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    <span class="btn-label">清書する</span>
+                  </button>
+                  <span class="char-count" id="memo-char-count">0文字</span>
+                </div>
               </div>
               <p class="step-desc">面接時のメモをそのまま貼り付けてください。AIが内容を整理し、倶楽部コメントを作成します。</p>
               <textarea id="memo" rows="12" placeholder="面接メモを貼り付けてください"></textarea>
+
+              <div id="clean-memo-result" class="clean-memo-result hidden">
+                <div id="clean-memo-warnings" class="warnings hidden"></div>
+                <label class="result-sublabel">清書結果（確認して、良ければ採用してください）</label>
+                <textarea id="clean-memo-text" rows="10"></textarea>
+                <div class="actions">
+                  <button id="clean-memo-adopt-btn">採用する</button>
+                  <span id="clean-memo-status" class="status"></span>
+                </div>
+              </div>
             </div>
 
             <div class="card">

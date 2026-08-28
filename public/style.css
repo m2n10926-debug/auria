@@ -363,6 +363,19 @@ button {
   gap: 8px;
 }
 
+.step-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.clean-memo-result {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
 .style-notes-list {
   display: flex;
   flex-direction: column;

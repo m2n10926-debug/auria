@@ -61,6 +61,20 @@ app.get("/api/session", (req, res) => {
   res.json({ user: req.session.user });
 });
 
+app.post("/api/clean-memo", async (req, res) => {
+  const { memo } = req.body || {};
+  if (!memo || !memo.trim()) {
+    res.status(400).json({ error: "面接メモを入力してください。" });
+    return;
+  }
+  try {
+    const result = await core.cleanUpMemo(memo.trim());
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post("/api/generate", async (req, res) => {
   const accountId = req.session.user.accountId;
   const { memo, name, model, height, weight, bust, type, age, occupation, impression, includeConcerns } =
