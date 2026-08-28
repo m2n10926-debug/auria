@@ -342,6 +342,7 @@
           type: typeEl.value || null,
           impression: impressionEl.value.trim() || null,
           includeConcerns: includeConcernsEl.checked,
+          provider: document.querySelector('input[name="ai-provider"]:checked').value,
         }),
       });
       const data = await res.json();

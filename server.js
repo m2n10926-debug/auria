@@ -77,13 +77,14 @@ app.post("/api/clean-memo", async (req, res) => {
 
 app.post("/api/generate", async (req, res) => {
   const accountId = req.session.user.accountId;
-  const { memo, name, model, height, weight, bust, type, age, occupation, impression, includeConcerns } =
+  const { memo, name, model, provider, height, weight, bust, type, age, occupation, impression, includeConcerns } =
     req.body || {};
   try {
     const result = await core.generateIntro({
       memo,
       name,
       model,
+      provider,
       height,
       weight,
       bust,

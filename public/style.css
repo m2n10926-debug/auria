@@ -443,6 +443,31 @@ button {
   cursor: pointer;
 }
 
+.provider-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.provider-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.provider-toggle input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-solid);
+  cursor: pointer;
+}
+
 .helper-text {
   text-align: center;
   color: var(--muted);
