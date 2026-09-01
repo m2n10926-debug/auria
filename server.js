@@ -49,6 +49,7 @@ app.get("/api/auth/sso", async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       maxAge: 10 * 60 * 1000,
     });
+    console.log("[auth/sso] NODE_ENV=%s state=%s host=%s", process.env.NODE_ENV, state, req.headers.host);
     res.redirect(url);
   } catch (err) {
     res.status(500).send(`GROUP BOARDへの接続に失敗しました。しばらくしてから再度お試しください。（${err.message}）`);
@@ -66,6 +67,16 @@ app.get("/api/auth/callback/groupboard", async (req, res) => {
   } catch {
     saved = null;
   }
+  console.log(
+    "[auth/callback] host=%s cookieHeaderPresent=%s cookieKeys=%j hasGbOauth=%s parsedOk=%s queryState=%s savedState=%s",
+    req.headers.host,
+    !!req.headers.cookie,
+    req.cookies ? Object.keys(req.cookies) : null,
+    !!oauthCookie,
+    !!saved,
+    req.query.state,
+    saved && saved.state
+  );
   if (!saved || !req.query.state || req.query.state !== saved.state) {
     return res.status(400).send("ログイン処理の有効期限が切れました。もう一度ログインしてください。");
   }
