@@ -354,23 +354,6 @@
           </div>
         </div>
 
-        <div class="card">
-          <h2>パスワード変更</h2>
-          <div class="field-row">
-            <div class="field">
-              <label for="current-password">現在のパスワード</label>
-              <input id="current-password" type="password">
-            </div>
-            <div class="field">
-              <label for="new-password">新しいパスワード（8文字以上）</label>
-              <input id="new-password" type="password">
-            </div>
-          </div>
-          <div class="actions">
-            <button id="change-password-btn">変更する</button>
-            <span id="change-password-status" class="status"></span>
-          </div>
-        </div>
       </section>
 
       <section id="tab-about" class="tab-panel">
@@ -417,28 +400,8 @@
 
       <section id="tab-admin" class="tab-panel">
         <div class="card">
-          <h2>アカウント発行</h2>
-          <p class="muted">新しく使い始める担当者のアカウントを発行します。発行後、ユーザー名とパスワードを本人に伝えてください。</p>
-          <div class="field">
-            <label for="admin-new-username">ユーザー名（メールアドレス可）</label>
-            <input id="admin-new-username" type="text" placeholder="例: yamada@example.com">
-          </div>
-          <div class="field">
-            <label for="admin-new-display-name">表示名</label>
-            <input id="admin-new-display-name" type="text" placeholder="例: 山田">
-          </div>
-          <div class="field">
-            <label for="admin-new-password">パスワード（8文字以上）</label>
-            <input id="admin-new-password" type="text" placeholder="例: itsumo5963">
-          </div>
-          <div class="actions">
-            <button id="admin-create-account-btn">発行する</button>
-            <span id="admin-create-account-status" class="status"></span>
-          </div>
-        </div>
-
-        <div class="card">
           <h2>作成済みアカウント一覧</h2>
+          <p class="muted">アカウントはGROUP BOARD経由の初回ログイン時に自動で作られます。ここでは利用状況のみ確認できます。</p>
           <div id="admin-accounts-list" class="admin-accounts-list">
             <p class="muted">読み込み中...</p>
           </div>

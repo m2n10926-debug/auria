@@ -15,7 +15,6 @@
     --text: #1f2937;
     --muted: #6b7280;
     --border: #e5e7eb;
-    --accent-solid: #0d9488;
     --gradient: linear-gradient(135deg, #14b8a6, #0ea5e9);
     --error-bg: #fef2f2;
     --error-border: #fca5a5;
@@ -40,13 +39,14 @@
     width: 100%;
     max-width: 360px;
     box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.12);
+    text-align: center;
   }
   .brand {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 28px;
+    margin-bottom: 12px;
   }
   .brand-logo { width: 40px; height: 40px; }
   .brand-name {
@@ -55,20 +55,15 @@
     font-weight: 700;
     color: #2b3358;
   }
-
-  .field { margin-bottom: 16px; }
-  label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
-  input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: inherit;
+  .desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0 0 28px;
+    line-height: 1.6;
   }
-  input:focus { outline: 2px solid #14b8a6; outline-offset: 1px; }
 
-  button {
+  a.login-btn {
+    display: block;
     width: 100%;
     background: var(--gradient);
     color: #fff;
@@ -78,9 +73,8 @@
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 8px;
+    text-decoration: none;
   }
-  button:disabled { opacity: 0.6; cursor: default; }
 
   .error {
     background: var(--error-bg);
@@ -91,6 +85,7 @@
     font-size: 0.85rem;
     margin-bottom: 16px;
     display: none;
+    text-align: left;
   }
   .error.visible { display: block; }
 </style>
@@ -101,24 +96,14 @@
       <img class="brand-logo" src="logo.png" alt="auria">
       <span class="brand-name">auria</span>
     </div>
+    <p class="desc">社内共通のGROUP BOARDアカウントでログインします。</p>
 
     <div id="error" class="error"></div>
 
-    <form id="login-form">
-      <div class="field">
-        <label for="username">ユーザー名</label>
-        <input id="username" type="text" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="password">パスワード</label>
-        <input id="password" type="password" autocomplete="current-password" required>
-      </div>
-      <button id="login-btn" type="submit">ログイン</button>
-    </form>
+    <a id="login-btn" class="login-btn" href="#">GROUP BOARDでログイン</a>
   </div>
 
 <script>
-  const form = document.getElementById("login-form");
   const errorEl = document.getElementById("error");
   const loginBtn = document.getElementById("login-btn");
 
@@ -128,31 +113,13 @@
     return next;
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorEl.classList.remove("visible");
-    loginBtn.disabled = true;
-    loginBtn.textContent = "ログイン中...";
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("error")) {
+    errorEl.textContent = "ログインに失敗しました。もう一度お試しください。";
+    errorEl.classList.add("visible");
+  }
 
-    try {
-      const res = await fetch("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: document.getElementById("username").value.trim(),
-          password: document.getElementById("password").value,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "ログインに失敗しました。");
-      window.location.href = getSafeNextPath();
-    } catch (err) {
-      errorEl.textContent = err.message;
-      errorEl.classList.add("visible");
-      loginBtn.disabled = false;
-      loginBtn.textContent = "ログイン";
-    }
-  });
+  loginBtn.href = "/api/auth/sso?next=" + encodeURIComponent(getSafeNextPath());
 </script>
 </body>
 </html>

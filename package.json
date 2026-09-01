@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
+    "@unvs-seisaku/sdk": "^0.11.0",
+    "cookie-parser": "^1.4.7",
     "cookie-session": "^2.1.1",
     "express": "^5.2.1",
     "openai": "^7.8.0",

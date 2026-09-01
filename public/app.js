@@ -25,9 +25,8 @@
   }
   loadSession();
 
-  logoutBtn.addEventListener("click", async () => {
-    await fetch("/auth/logout", { method: "POST" });
-    window.location.href = "/login.html";
+  logoutBtn.addEventListener("click", () => {
+    window.location.href = "/api/auth/logout";
   });
 
   // --- タブ切り替え ---
@@ -938,65 +937,6 @@
     }
   }
 
-  const adminNewUsernameEl = document.getElementById("admin-new-username");
-  const adminNewDisplayNameEl = document.getElementById("admin-new-display-name");
-  const adminNewPasswordEl = document.getElementById("admin-new-password");
-  const adminCreateAccountBtn = document.getElementById("admin-create-account-btn");
-  const adminCreateAccountStatus = document.getElementById("admin-create-account-status");
-
-  adminCreateAccountBtn.addEventListener("click", async () => {
-    const username = adminNewUsernameEl.value.trim();
-    const displayName = adminNewDisplayNameEl.value.trim();
-    const password = adminNewPasswordEl.value;
-    if (!username || !displayName || !password) {
-      adminCreateAccountStatus.textContent = "ユーザー名・表示名・パスワードをすべて入力してください。";
-      return;
-    }
-    adminCreateAccountStatus.textContent = "発行しています...";
-    try {
-      const res = await fetch("/api/admin/accounts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, displayName, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "発行に失敗しました。");
-      adminCreateAccountStatus.textContent = `発行しました: ${data.account.accountId} (${data.account.displayName})`;
-      adminNewUsernameEl.value = "";
-      adminNewDisplayNameEl.value = "";
-      adminNewPasswordEl.value = "";
-      loadAdminAccounts();
-    } catch (err) {
-      adminCreateAccountStatus.textContent = `エラー: ${err.message}`;
-    }
-  });
-
-  // --- パスワード変更 ---
-  const currentPasswordEl = document.getElementById("current-password");
-  const newPasswordEl = document.getElementById("new-password");
-  const changePasswordBtn = document.getElementById("change-password-btn");
-  const changePasswordStatus = document.getElementById("change-password-status");
-
-  changePasswordBtn.addEventListener("click", async () => {
-    changePasswordStatus.textContent = "変更しています...";
-    try {
-      const res = await fetch("/api/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: currentPasswordEl.value,
-          newPassword: newPasswordEl.value,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "変更に失敗しました。");
-      currentPasswordEl.value = "";
-      newPasswordEl.value = "";
-      changePasswordStatus.textContent = "変更しました。";
-    } catch (err) {
-      changePasswordStatus.textContent = `エラー: ${err.message}`;
-    }
-  });
 
   // --- 文章の癖・スタイル指示タブ ---
   const styleNotesListEl = document.getElementById("style-notes-list");

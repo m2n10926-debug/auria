@@ -3,17 +3,22 @@
 
 const path = require("path");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const core = require("./lib/core");
-const accounts = require("./lib/accounts");
-const { requireAuth } = require("./lib/auth");
 
 core.loadDotEnvIfPresent();
+
+const accounts = require("./lib/accounts");
+const { requireAuth, requireAdmin } = require("./lib/auth");
+const { getGb, getTokens, requestContextMiddleware } = require("./lib/groupboard");
 
 const app = express();
 app.set("trust proxy", Number(process.env.TRUST_PROXY || 0));
 
 app.use(express.json({ limit: "1mb" }));
+app.use(cookieParser());
+app.use(requestContextMiddleware);
 
 app.use(
   cookieSession({
@@ -27,30 +32,99 @@ app.use(
 );
 
 // --- 認証ルート（未認証でもアクセス可） ---
-app.post("/auth/login", async (req, res) => {
-  const { username, password } = req.body || {};
-  if (!username || !password) {
-    return res.status(400).json({ error: "ユーザー名とパスワードを入力してください。" });
-  }
+
+// ログイン開始: GROUP BOARDの認可画面へリダイレクトする。
+app.get("/api/auth/sso", async (req, res) => {
   try {
-    const user = await accounts.verifyPassword(username, password);
-    if (!user) {
-      return res.status(401).json({ error: "ユーザー名またはパスワードが正しくありません。" });
-    }
-    // セッションを丸ごと置き換える（未認証時のCookieがログイン後に「昇格」されるのを防ぐ）
-    req.session = { user };
-    res.json({ ok: true, user });
+    const gb = await getGb();
+    const auth = await gb.auth();
+    const idp = await gb.identityProvider();
+    const { url, state, codeVerifier } = await auth.buildAuthorizeUrl({ identityProvider: idp ?? undefined });
+    const rawNext = typeof req.query.next === "string" ? req.query.next : "/";
+    const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
+    res.cookie("gb_oauth", JSON.stringify({ state, codeVerifier, next }), {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 10 * 60 * 1000,
+    });
+    res.redirect(url);
   } catch (err) {
-    res.status(500).json({ error: "ログインに失敗しました。" });
+    res.status(500).send(`GROUP BOARDへの接続に失敗しました。しばらくしてから再度お試しください。（${err.message}）`);
   }
 });
 
-app.post("/auth/logout", (req, res) => {
-  req.session = null;
-  res.json({ ok: true });
+// ログインcallback: codeをトークンに交換し、本人特定・アカウント紐づけを行う。
+app.get("/api/auth/callback/groupboard", async (req, res) => {
+  const oauthCookie = req.cookies && req.cookies.gb_oauth;
+  res.clearCookie("gb_oauth", { path: "/" });
+
+  let saved;
+  try {
+    saved = JSON.parse(oauthCookie || "null");
+  } catch {
+    saved = null;
+  }
+  if (!saved || !req.query.state || req.query.state !== saved.state) {
+    return res.status(400).send("ログイン処理の有効期限が切れました。もう一度ログインしてください。");
+  }
+  if (!req.query.code) {
+    return res.status(400).send("ログインがキャンセルされました。");
+  }
+
+  try {
+    const gb = await getGb();
+    const tokens = await getTokens();
+    const auth = await gb.auth();
+    const result = await auth.handleCallback({ code: req.query.code, codeVerifier: saved.codeVerifier });
+
+    // fail-closed: empIdが取れない場合はログインさせない。
+    if (!result.empId) {
+      return res.status(403).send("社員情報を確認できませんでした。管理担当者にご連絡ください。");
+    }
+    if (!result.email) {
+      return res.status(403).send("メールアドレスを確認できませんでした。管理担当者にご連絡ください。");
+    }
+
+    await tokens.save(result);
+    await accounts.ensureAccountForSso(result.email);
+    await accounts.recordLogin(result.email);
+    const isAdmin = await gb.permissions.can(result.empId, "admin");
+
+    // セッションを丸ごと置き換える（未認証時のCookieがログイン後に「昇格」されるのを防ぐ）
+    req.session = {
+      user: { accountId: result.email, empId: result.empId, displayName: result.email, isAdmin },
+    };
+    res.redirect(saved.next || "/");
+  } catch (err) {
+    res.status(500).send(`ログインに失敗しました。（${err.message}）`);
+  }
+});
+
+app.get("/api/auth/logout", async (req, res) => {
+  try {
+    const gb = await getGb();
+    const tokens = await getTokens();
+    const auth = await gb.auth();
+    const logoutUrl = auth.buildLogoutUrl({
+      redirectUri: `${(process.env.GROUPBOARD_APP_URL || "").replace(/\/$/, "")}/login.html`,
+    });
+    await tokens.clear();
+    req.session = null;
+    res.redirect(logoutUrl);
+  } catch (err) {
+    req.session = null;
+    res.redirect("/login.html");
+  }
 });
 
 app.use(express.static(path.join(__dirname, "public-auth")));
+
+// GROUP BOARDのポータルがタイル表示のため未ログインで直接叩くので、認証ゲートより前に置く。
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "favicon.ico"));
+});
 
 // --- ここから下は認証必須 ---
 app.use(requireAuth);
@@ -295,17 +369,6 @@ app.delete("/api/examples/personal/:id", async (req, res) => {
   }
 });
 
-// --- パスワード変更 ---
-app.post("/api/change-password", async (req, res) => {
-  const { currentPassword, newPassword } = req.body || {};
-  try {
-    await accounts.changePassword(req.session.user.accountId, currentPassword, newPassword);
-    res.json({ ok: true });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
 app.post("/api/change-display-name", async (req, res) => {
   const { displayName } = req.body || {};
   try {
@@ -317,28 +380,12 @@ app.post("/api/change-display-name", async (req, res) => {
   }
 });
 
-// --- アカウント発行（管理者のみ） ---
-app.get("/api/admin/accounts", async (req, res) => {
-  if (!req.session.user.isAdmin) {
-    return res.status(403).json({ error: "この操作を行う権限がありません。" });
-  }
+// --- 利用状況（管理者のみ。アカウントの発行自体はGROUP BOARD側のロール割当で行う） ---
+app.get("/api/admin/accounts", requireAdmin, async (req, res) => {
   try {
     res.json(await accounts.listAccounts());
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
-
-app.post("/api/admin/accounts", async (req, res) => {
-  if (!req.session.user.isAdmin) {
-    return res.status(403).json({ error: "この操作を行う権限がありません。" });
-  }
-  const { username, password, displayName } = req.body || {};
-  try {
-    const created = await accounts.createAccount({ username, password, displayName });
-    res.json({ ok: true, account: created });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
 });
 
