@@ -33,6 +33,12 @@ app.use(
 
 // --- 認証ルート（未認証でもアクセス可） ---
 
+// ログインボタンの連打・複数タブでの同時ログイン開始でも互いに上書きしないよう、
+// state(認可リクエストごとに異なるランダム値)ごとに別々のCookie名を使う。
+function oauthCookieName(state) {
+  return `gb_oauth_${String(state).replace(/[^A-Za-z0-9_-]/g, "")}`;
+}
+
 // ログイン開始: GROUP BOARDの認可画面へリダイレクトする。
 app.get("/api/auth/sso", async (req, res) => {
   try {
@@ -42,7 +48,7 @@ app.get("/api/auth/sso", async (req, res) => {
     const { url, state, codeVerifier } = await auth.buildAuthorizeUrl({ identityProvider: idp ?? undefined });
     const rawNext = typeof req.query.next === "string" ? req.query.next : "/";
     const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
-    res.cookie("gb_oauth", JSON.stringify({ state, codeVerifier, next }), {
+    res.cookie(oauthCookieName(state), JSON.stringify({ codeVerifier, next }), {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
@@ -57,8 +63,9 @@ app.get("/api/auth/sso", async (req, res) => {
 
 // ログインcallback: codeをトークンに交換し、本人特定・アカウント紐づけを行う。
 app.get("/api/auth/callback/groupboard", async (req, res) => {
-  const oauthCookie = req.cookies && req.cookies.gb_oauth;
-  res.clearCookie("gb_oauth", { path: "/" });
+  const cookieName = oauthCookieName(req.query.state);
+  const oauthCookie = req.cookies && req.cookies[cookieName];
+  res.clearCookie(cookieName, { path: "/" });
 
   let saved;
   try {
@@ -66,7 +73,7 @@ app.get("/api/auth/callback/groupboard", async (req, res) => {
   } catch {
     saved = null;
   }
-  if (!saved || !req.query.state || req.query.state !== saved.state) {
+  if (!saved || !req.query.state) {
     return res.status(400).send("ログイン処理の有効期限が切れました。もう一度ログインしてください。");
   }
   if (!req.query.code) {
