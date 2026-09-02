@@ -77,6 +77,7 @@
   const weightEl = document.getElementById("weight");
   const bustEl = document.getElementById("bust");
   const typeEl = document.getElementById("type");
+  const hobbyEl = document.getElementById("hobby");
   const impressionEl = document.getElementById("impression");
   const includeConcernsEl = document.getElementById("include-concerns");
   const generateBtn = document.getElementById("generate-btn");
@@ -216,6 +217,7 @@
       weight: weightEl,
       bust: bustEl,
       type: typeEl,
+      hobby: hobbyEl,
       impression: impressionEl,
     };
     for (const [key, el] of Object.entries(fieldMap)) {
@@ -339,6 +341,7 @@
           weight: weightEl.value.trim() || null,
           bust: bustEl.value.trim() || null,
           type: typeEl.value || null,
+          hobby: hobbyEl.value.trim() || null,
           impression: impressionEl.value.trim() || null,
           includeConcerns: includeConcernsEl.checked,
           provider: document.querySelector('input[name="ai-provider"]:checked').value,
@@ -370,6 +373,7 @@
     weightEl.value = "";
     bustEl.value = "";
     typeEl.value = "";
+    hobbyEl.value = "";
     impressionEl.value = "";
     updateMemoCharCount();
 
@@ -520,6 +524,7 @@
     if (record.weight) metaParts.push(`体重 ${record.weight}kg`);
     if (record.bust) metaParts.push(`バスト ${record.bust}`);
     if (record.type) metaParts.push(`交際タイプ ${record.type}`);
+    if (record.hobby) metaParts.push(`趣味・特技 ${record.hobby}`);
     historyDetailMeta.textContent = metaParts.join(" / ");
     historyDetailMemo.value = record.memo;
     historyDetailOutput.value = record.output;
@@ -564,6 +569,7 @@
     weightEl.value = currentHistoryRecord.weight || "";
     bustEl.value = currentHistoryRecord.bust || "";
     typeEl.value = currentHistoryRecord.type || "";
+    hobbyEl.value = currentHistoryRecord.hobby || "";
     impressionEl.value = currentHistoryRecord.impression || "";
     updateMemoCharCount();
     renderGeneratedResult(

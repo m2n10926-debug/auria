@@ -46,6 +46,7 @@ create table if not exists history (
   type                   text,
   age                    text,
   occupation             text,
+  hobby                  text,
   impression             text,
   copied_at              timestamptz,
   edited_at              timestamptz,
