@@ -10,6 +10,7 @@ const core = require("./lib/core");
 core.loadDotEnvIfPresent();
 
 const accounts = require("./lib/accounts");
+const db = require("./lib/db");
 const { requireAuth, requireAdmin } = require("./lib/auth");
 const { getGb, getTokens, requestContextMiddleware } = require("./lib/groupboard");
 
@@ -33,10 +34,26 @@ app.use(
 
 // --- 認証ルート（未認証でもアクセス可） ---
 
-// ログインボタンの連打・複数タブでの同時ログイン開始でも互いに上書きしないよう、
-// state(認可リクエストごとに異なるランダム値)ごとに別々のCookie名を使う。
-function oauthCookieName(state) {
-  return `gb_oauth_${String(state).replace(/[^A-Za-z0-9_-]/g, "")}`;
+// ログイン開始時の state/codeVerifier/next は、Cookie伝達がブラウザ環境によって
+// 不安定なことが分かったため、Cookieではなく短命なDBテーブル(oauth_attempts)に
+// 保存する。state自体はGROUP BOARD(Cognito)とのやり取りの中で必ずURLに載って
+// 戻ってくるため、Cookie無しでも安全に紐づけられる。
+async function saveOauthAttempt(state, codeVerifier, next) {
+  await db.query(
+    "INSERT INTO oauth_attempts (state, code_verifier, next) VALUES ($1, $2, $3) " +
+      "ON CONFLICT (state) DO UPDATE SET code_verifier = EXCLUDED.code_verifier, next = EXCLUDED.next",
+    [state, codeVerifier, next]
+  );
+  // ついでに古い試行(1時間以上前=通常なら10分で使い捨てのはず)を掃除しておく。
+  await db.query("DELETE FROM oauth_attempts WHERE created_at < now() - interval '1 hour'").catch(() => {});
+}
+
+async function takeOauthAttempt(state) {
+  if (!state) return null;
+  const { rows } = await db.query("DELETE FROM oauth_attempts WHERE state = $1 RETURNING code_verifier, next", [
+    state,
+  ]);
+  return rows[0] ? { codeVerifier: rows[0].code_verifier, next: rows[0].next } : null;
 }
 
 // ログイン開始: GROUP BOARDの認可画面へリダイレクトする。
@@ -48,13 +65,7 @@ app.get("/api/auth/sso", async (req, res) => {
     const { url, state, codeVerifier } = await auth.buildAuthorizeUrl({ identityProvider: idp ?? undefined });
     const rawNext = typeof req.query.next === "string" ? req.query.next : "/";
     const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
-    res.cookie(oauthCookieName(state), JSON.stringify({ codeVerifier, next }), {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 10 * 60 * 1000,
-    });
+    await saveOauthAttempt(state, codeVerifier, next);
     res.redirect(url);
   } catch (err) {
     res.status(500).send(`GROUP BOARDへの接続に失敗しました。しばらくしてから再度お試しください。（${err.message}）`);
@@ -63,26 +74,8 @@ app.get("/api/auth/sso", async (req, res) => {
 
 // ログインcallback: codeをトークンに交換し、本人特定・アカウント紐づけを行う。
 app.get("/api/auth/callback/groupboard", async (req, res) => {
-  const cookieName = oauthCookieName(req.query.state);
-  const oauthCookie = req.cookies && req.cookies[cookieName];
-  res.clearCookie(cookieName, { path: "/" });
-
-  let saved;
-  try {
-    saved = JSON.parse(oauthCookie || "null");
-  } catch {
-    saved = null;
-  }
-  if (!saved || !req.query.state) {
-    const allCookieNames = req.cookies ? Object.keys(req.cookies) : [];
-    console.log(
-      "[auth/callback] EXPIRED expectedCookie=%s present=%s allGbOauthCookies=%j allCookieNames=%j ua=%s",
-      cookieName,
-      !!oauthCookie,
-      allCookieNames.filter((n) => n.startsWith("gb_oauth_")),
-      allCookieNames,
-      req.headers["user-agent"]
-    );
+  const saved = await takeOauthAttempt(req.query.state);
+  if (!saved) {
     return res.status(400).send("ログイン処理の有効期限が切れました。もう一度ログインしてください。");
   }
   if (!req.query.code) {

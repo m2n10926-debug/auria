@@ -55,6 +55,15 @@ create table if not exists history (
 create index if not exists history_account_id_created_at_idx
   on history (account_id, created_at desc);
 
+-- GROUP BOARD SSOログインの一時状態(state -> codeVerifier/next)。
+-- Cookie伝達の不安定さを避けるため、DB側に持つ(10分程度で使い捨て)。
+create table if not exists oauth_attempts (
+  state        text primary key,
+  code_verifier text not null,
+  next         text not null default '/',
+  created_at   timestamptz not null default now()
+);
+
 create table if not exists login_events (
   id         uuid primary key default gen_random_uuid(),
   account_id text not null references accounts(account_id) on delete cascade,
