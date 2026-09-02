@@ -41,6 +41,21 @@
     return String(value);
   }
 
+  // 面接時の情報として不要な部分を取り除く。
+  // ・「--以下、応募時・過去の備考--」以降は過去の情報のため除く
+  // ・キャンセル関連の行は面接時の情報と関係ないため除く
+  function filterMemo(raw) {
+    if (!raw) return raw;
+    var marker = "--以下、応募時・過去の備考--";
+    var idx = raw.indexOf(marker);
+    var text = idx === -1 ? raw : raw.slice(0, idx);
+
+    var lines = text.split(/\r?\n/).filter(function (line) {
+      return !/^\s*キャンセルした予定日\s*[:：]/.test(line) && !/^\s*キャンセル理由\s*[:：]/.test(line);
+    });
+    return lines.join("\n").trim();
+  }
+
   if (typeof ZOHO === "undefined") {
     showError("エラー: Zoho SDKの読み込みに失敗しました。");
   } else {
@@ -62,7 +77,7 @@
 
           var params = new URLSearchParams();
           var name = fieldToString(record.club_name_kana);
-          var memo = fieldToString(record.note);
+          var memo = filterMemo(fieldToString(record.note));
           if (name) params.set("name", name);
           if (memo) params.set("memo", memo);
           if (record.custom_age) params.set("age", fieldToString(record.custom_age));
