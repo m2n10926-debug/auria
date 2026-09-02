@@ -74,6 +74,15 @@ app.get("/api/auth/callback/groupboard", async (req, res) => {
     saved = null;
   }
   if (!saved || !req.query.state) {
+    const allCookieNames = req.cookies ? Object.keys(req.cookies) : [];
+    console.log(
+      "[auth/callback] EXPIRED expectedCookie=%s present=%s allGbOauthCookies=%j allCookieNames=%j ua=%s",
+      cookieName,
+      !!oauthCookie,
+      allCookieNames.filter((n) => n.startsWith("gb_oauth_")),
+      allCookieNames,
+      req.headers["user-agent"]
+    );
     return res.status(400).send("ログイン処理の有効期限が切れました。もう一度ログインしてください。");
   }
   if (!req.query.code) {
