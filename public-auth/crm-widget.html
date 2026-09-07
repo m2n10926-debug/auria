@@ -25,6 +25,8 @@
 <body>
 <p id="status">レコードを読み込んでいます...</p>
 <div id="link-container"></div>
+<!-- TEMP DEBUG: 項目API名確認用。確認後にこのblockごと削除する -->
+<pre id="debug-dump" style="margin-top:16px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:12px; font-size:0.75rem; white-space:pre-wrap; word-break:break-all;"></pre>
 <script>
   var AURIA_URL = "https://auria-blue.vercel.app/";
 
@@ -86,6 +88,9 @@
           if (record.weight) params.set("weight", fieldToString(record.weight));
           if (record.bust_cup) params.set("bust", fieldToString(record.bust_cup));
           if (record.dating_type) params.set("type", fieldToString(record.dating_type));
+
+          // TEMP DEBUG: 項目API名確認用。確認後にこのif blockごと削除する
+          document.getElementById("debug-dump").textContent = JSON.stringify(record, null, 2);
 
           var url = AURIA_URL + "?" + params.toString();
           statusEl.textContent = "レコードの情報を準備できました。下のボタンを押してauriaを開いてください。";
