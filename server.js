@@ -128,6 +128,79 @@ app.get("/api/auth/logout", async (req, res) => {
   }
 });
 
+// --- 外部ツール連携用API（ブラウザのログインセッションではなく、APIキーで認証する） ---
+// 例: 面接の文字起こしから面接メモを自動生成する別ツールから、倶楽部コメント生成だけを呼び出す用途。
+app.post("/api/external/generate", async (req, res) => {
+  const apiKey = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
+  if (!process.env.AURIA_API_KEY || apiKey !== process.env.AURIA_API_KEY) {
+    return res.status(401).json({ error: "APIキーが正しくありません。" });
+  }
+
+  const {
+    accountId,
+    memo,
+    name,
+    model,
+    provider,
+    height,
+    weight,
+    bust,
+    type,
+    age,
+    occupation,
+    hobby,
+    impression,
+    includeConcerns,
+  } = req.body || {};
+
+  if (!accountId || !(await accounts.accountExists(accountId))) {
+    return res.status(400).json({ error: "accountIdが未指定か、存在しないアカウントです。" });
+  }
+
+  try {
+    const result = await core.generateIntro({
+      memo,
+      name,
+      model,
+      provider,
+      height,
+      weight,
+      bust,
+      type,
+      age,
+      occupation,
+      hobby,
+      impression,
+      includeConcerns: !!includeConcerns,
+      accountId,
+    });
+    const record = await core.saveHistory({
+      name,
+      memo,
+      output: result.output,
+      recommendation: result.recommendation,
+      model: result.model,
+      bannedHits: result.bannedHits,
+      missingHeadings: result.missingHeadings,
+      closingRepetition: result.closingRepetition,
+      missingRecommendation: result.missingRecommendation,
+      consistencyWarnings: result.consistencyWarnings,
+      height,
+      weight,
+      bust,
+      type,
+      age,
+      occupation,
+      hobby,
+      impression,
+      accountId,
+    });
+    res.json({ ...result, id: record.id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.use(express.static(path.join(__dirname, "public-auth")));
 
 // GROUP BOARDのポータルがタイル表示のため未ログインで直接叩くので、認証ゲートより前に置く。
